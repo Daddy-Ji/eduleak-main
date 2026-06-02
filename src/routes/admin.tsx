@@ -1,0 +1,431 @@
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { uploadFile } from "@/lib/storage";
+import { SignedImage } from "@/components/SignedImage";
+import { extractYouTubeId } from "@/lib/utils-youtube";
+import { Trash2, Plus, Save, LogOut, ShieldAlert } from "lucide-react";
+
+export const Route = createFileRoute("/admin")({
+  head: () => ({ meta: [{ title: "Admin | EduShare" }, { name: "robots", content: "noindex" }] }),
+  component: AdminPage,
+});
+
+type Tab = "courses" | "coachings" | "exams" | "settings";
+
+function AdminPage() {
+  const { user, isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<Tab>("courses");
+
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/auth" });
+  }, [loading, user, navigate]);
+
+  if (loading) return <div className="p-8 text-muted-foreground">Loading…</div>;
+  if (!user) return null;
+  if (!isAdmin) {
+    return (
+      <div className="mx-auto max-w-md p-12 text-center">
+        <ShieldAlert className="h-10 w-10 mx-auto text-destructive mb-3" />
+        <h1 className="font-display text-2xl">Admin access required</h1>
+        <p className="text-muted-foreground mt-2">
+          Your account isn't an admin. The pre-seeded admin email is <code className="bg-muted px-1.5 py-0.5 rounded">admin@edushare.app</code> —
+          sign up with that address (you can change it later).
+        </p>
+        <Link to="/" className="inline-block mt-4 text-primary hover:underline">Go home</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="font-display text-3xl font-semibold">Admin dashboard</h1>
+        <Button variant="outline" size="sm" onClick={() => supabase.auth.signOut()} className="gap-1.5">
+          <LogOut className="h-4 w-4" /> Sign out
+        </Button>
+      </div>
+      <div className="flex gap-1 border-b mb-6 overflow-auto">
+        {(["courses", "coachings", "exams", "settings"] as Tab[]).map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize transition ${
+              tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}>
+            {t}
+          </button>
+        ))}
+      </div>
+      {tab === "courses" && <CoursesAdmin />}
+      {tab === "coachings" && <CoachingsAdmin />}
+      {tab === "exams" && <ExamsAdmin />}
+      {tab === "settings" && <SettingsAdmin />}
+    </div>
+  );
+}
+
+// ============ Coachings ============
+function CoachingsAdmin() {
+  const [items, setItems] = useState<any[]>([]);
+  const [form, setForm] = useState({ name: "", slug: "", description: "", logo_url: "", display_order: 0 });
+  const [busy, setBusy] = useState(false);
+
+  const load = async () => {
+    const { data } = await supabase.from("coachings").select("*").order("display_order");
+    setItems(data ?? []);
+  };
+  useEffect(() => { load(); }, []);
+
+  const create = async () => {
+    if (!form.name || !form.slug) return toast.error("Name and slug are required");
+    setBusy(true);
+    const { error } = await supabase.from("coachings").insert(form);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Coaching added");
+    setForm({ name: "", slug: "", description: "", logo_url: "", display_order: 0 });
+    load();
+  };
+
+  const update = async (id: string, patch: any) => {
+    const { error } = await supabase.from("coachings").update(patch).eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Saved"); load(); }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this coaching?")) return;
+    const { error } = await supabase.from("coachings").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
+  };
+
+  const upload = async (file: File, onDone: (p: string) => void) => {
+    try { const path = await uploadFile("coaching-logos", file); onDone(path); toast.success("Logo uploaded"); }
+    catch (e: any) { toast.error(e.message); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl border bg-card p-5">
+        <h3 className="font-semibold mb-3">Add coaching</h3>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <input className="px-3 py-2 rounded-lg border" placeholder="Name (e.g. Allen)"
+            value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className="px-3 py-2 rounded-lg border" placeholder="Slug (e.g. allen)"
+            value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase() })} />
+          <textarea className="sm:col-span-2 px-3 py-2 rounded-lg border" placeholder="Description"
+            value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <input type="file" accept="image/*"
+            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], (p) => setForm({ ...form, logo_url: p }))} />
+          {form.logo_url && <SignedImage bucket="coaching-logos" path={form.logo_url} alt="logo" className="h-12 w-12 rounded-lg object-cover" />}
+        </div>
+        <Button className="mt-3" onClick={create} disabled={busy}><Plus className="h-4 w-4 mr-1" /> Add</Button>
+      </div>
+
+      <div className="space-y-2">
+        {items.map((c) => (
+          <div key={c.id} className="rounded-xl border bg-card p-4 flex items-center gap-4">
+            <SignedImage bucket="coaching-logos" path={c.logo_url} alt={c.name} className="h-12 w-12 rounded-lg object-cover bg-muted" />
+            <div className="flex-1 grid sm:grid-cols-3 gap-2">
+              <input defaultValue={c.name} className="px-2 py-1.5 rounded border" onBlur={(e) => e.target.value !== c.name && update(c.id, { name: e.target.value })} />
+              <input defaultValue={c.slug} className="px-2 py-1.5 rounded border" onBlur={(e) => e.target.value !== c.slug && update(c.id, { slug: e.target.value })} />
+              <input type="number" defaultValue={c.display_order} className="px-2 py-1.5 rounded border w-24"
+                onBlur={(e) => Number(e.target.value) !== c.display_order && update(c.id, { display_order: Number(e.target.value) })} />
+            </div>
+            <input type="file" accept="image/*" className="text-xs w-32"
+              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], (p) => update(c.id, { logo_url: p }))} />
+            <Button variant="ghost" size="sm" onClick={() => remove(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============ Exams ============
+function ExamsAdmin() {
+  const [items, setItems] = useState<any[]>([]);
+  const [form, setForm] = useState({ name: "", slug: "", description: "", display_order: 0 });
+  const load = async () => { const { data } = await supabase.from("exams").select("*").order("display_order"); setItems(data ?? []); };
+  useEffect(() => { load(); }, []);
+  const create = async () => {
+    if (!form.name || !form.slug) return toast.error("Name and slug required");
+    const { error } = await supabase.from("exams").insert(form);
+    if (error) toast.error(error.message); else { toast.success("Added"); setForm({ name: "", slug: "", description: "", display_order: 0 }); load(); }
+  };
+  const update = async (id: string, patch: any) => { const { error } = await supabase.from("exams").update(patch).eq("id", id); if (error) toast.error(error.message); else load(); };
+  const remove = async (id: string) => { if (!confirm("Delete?")) return; const { error } = await supabase.from("exams").delete().eq("id", id); if (error) toast.error(error.message); else load(); };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-2xl border bg-card p-5">
+        <h3 className="font-semibold mb-3">Add exam</h3>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <input className="px-3 py-2 rounded-lg border" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className="px-3 py-2 rounded-lg border" placeholder="Slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase() })} />
+          <textarea className="sm:col-span-2 px-3 py-2 rounded-lg border" placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        </div>
+        <Button className="mt-3" onClick={create}><Plus className="h-4 w-4 mr-1" /> Add</Button>
+      </div>
+      <div className="space-y-2">
+        {items.map((e) => (
+          <div key={e.id} className="rounded-xl border bg-card p-4 flex items-center gap-3">
+            <input defaultValue={e.name} className="px-2 py-1.5 rounded border flex-1" onBlur={(ev) => ev.target.value !== e.name && update(e.id, { name: ev.target.value })} />
+            <input defaultValue={e.slug} className="px-2 py-1.5 rounded border flex-1" onBlur={(ev) => ev.target.value !== e.slug && update(e.id, { slug: ev.target.value })} />
+            <Button variant="ghost" size="sm" onClick={() => remove(e.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============ Courses ============
+function CoursesAdmin() {
+  const [items, setItems] = useState<any[]>([]);
+  const [coachings, setCoachings] = useState<any[]>([]);
+  const [exams, setExams] = useState<any[]>([]);
+  const [editing, setEditing] = useState<any | null>(null);
+
+  const load = async () => {
+    const [c, co, ex] = await Promise.all([
+      supabase.from("courses").select("*, coaching:coachings(name), exam:exams(name)").order("created_at", { ascending: false }),
+      supabase.from("coachings").select("*").order("display_order"),
+      supabase.from("exams").select("*").order("display_order"),
+    ]);
+    setItems(c.data ?? []); setCoachings(co.data ?? []); setExams(ex.data ?? []);
+  };
+  useEffect(() => { load(); }, []);
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete course and all its lessons?")) return;
+    const { error } = await supabase.from("courses").delete().eq("id", id);
+    if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
+  };
+
+  if (editing) return <CourseEditor course={editing} coachings={coachings} exams={exams} onDone={() => { setEditing(null); load(); }} />;
+
+  return (
+    <div className="space-y-4">
+      <Button onClick={() => setEditing({ _new: true, course_type: "youtube", is_published: true, display_order: 0 })}>
+        <Plus className="h-4 w-4 mr-1" /> New course
+      </Button>
+      <div className="space-y-2">
+        {items.map((c) => (
+          <div key={c.id} className="rounded-xl border bg-card p-4 flex items-center gap-4">
+            <SignedImage bucket="course-covers" path={c.cover_url} alt={c.title} className="h-14 w-20 rounded object-cover bg-muted" />
+            <div className="flex-1">
+              <div className="font-medium">{c.title}</div>
+              <div className="text-xs text-muted-foreground">
+                {c.coaching?.name ?? "—"} • {c.exam?.name ?? "—"} • {c.course_type} • {c.is_published ? "Published" : "Draft"}
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setEditing(c)}>Edit</Button>
+            <Button variant="ghost" size="sm" onClick={() => remove(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          </div>
+        ))}
+        {items.length === 0 && <div className="text-muted-foreground text-sm p-6 text-center border rounded-xl">No courses yet.</div>}
+      </div>
+    </div>
+  );
+}
+
+function CourseEditor({ course, coachings, exams, onDone }: any) {
+  const [f, setF] = useState({
+    title: course.title ?? "",
+    slug: course.slug ?? "",
+    description: course.description ?? "",
+    cover_url: course.cover_url ?? "",
+    course_type: course.course_type ?? "youtube",
+    coaching_id: course.coaching_id ?? "",
+    exam_id: course.exam_id ?? "",
+    external_url: course.external_url ?? "",
+    is_published: course.is_published ?? true,
+    display_order: course.display_order ?? 0,
+  });
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [files, setFiles] = useState<any[]>([]);
+  const [newLesson, setNewLesson] = useState({ title: "", youtube_url: "" });
+  const [busy, setBusy] = useState(false);
+  const id = course.id;
+
+  useEffect(() => {
+    if (!id) return;
+    supabase.from("lessons").select("*").eq("course_id", id).order("display_order").then(({ data }) => setLessons(data ?? []));
+    supabase.from("course_files").select("*").eq("course_id", id).order("display_order").then(({ data }) => setFiles(data ?? []));
+  }, [id]);
+
+  const save = async () => {
+    if (!f.title || !f.slug) return toast.error("Title and slug required");
+    setBusy(true);
+    const payload = { ...f, coaching_id: f.coaching_id || null, exam_id: f.exam_id || null };
+    const res = course._new
+      ? await supabase.from("courses").insert(payload).select().single()
+      : await supabase.from("courses").update(payload).eq("id", id).select().single();
+    setBusy(false);
+    if (res.error) return toast.error(res.error.message);
+    toast.success("Saved");
+    onDone();
+  };
+
+  const addLesson = async () => {
+    const yid = extractYouTubeId(newLesson.youtube_url);
+    if (!yid) return toast.error("Invalid YouTube URL");
+    if (!newLesson.title) return toast.error("Lesson title required");
+    const { error } = await supabase.from("lessons").insert({
+      course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid,
+      display_order: lessons.length,
+    });
+    if (error) return toast.error(error.message);
+    setNewLesson({ title: "", youtube_url: "" });
+    const { data } = await supabase.from("lessons").select("*").eq("course_id", id).order("display_order");
+    setLessons(data ?? []);
+  };
+  const delLesson = async (lid: string) => {
+    await supabase.from("lessons").delete().eq("id", lid);
+    setLessons(lessons.filter((l) => l.id !== lid));
+  };
+
+  const addFile = async (file: File) => {
+    try {
+      const path = await uploadFile("course-files", file);
+      const { error } = await supabase.from("course_files").insert({
+        course_id: id, name: file.name, file_url: path, display_order: files.length,
+      });
+      if (error) throw error;
+      const { data } = await supabase.from("course_files").select("*").eq("course_id", id).order("display_order");
+      setFiles(data ?? []);
+      toast.success("File uploaded");
+    } catch (e: any) { toast.error(e.message); }
+  };
+  const delFile = async (fid: string) => {
+    await supabase.from("course_files").delete().eq("id", fid);
+    setFiles(files.filter((x) => x.id !== fid));
+  };
+
+  const uploadCover = async (file: File) => {
+    try { const path = await uploadFile("course-covers", file); setF({ ...f, cover_url: path }); }
+    catch (e: any) { toast.error(e.message); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <button onClick={onDone} className="text-sm text-muted-foreground hover:text-foreground">← Back to courses</button>
+
+      <div className="rounded-2xl border bg-card p-5 space-y-3">
+        <h3 className="font-display text-xl font-semibold">{course._new ? "New course" : "Edit course"}</h3>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <input className="px-3 py-2 rounded-lg border" placeholder="Title" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+          <input className="px-3 py-2 rounded-lg border" placeholder="Slug" value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} />
+          <textarea className="sm:col-span-2 px-3 py-2 rounded-lg border" placeholder="Description" rows={3}
+            value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} />
+          <select className="px-3 py-2 rounded-lg border bg-background" value={f.coaching_id} onChange={(e) => setF({ ...f, coaching_id: e.target.value })}>
+            <option value="">— Coaching —</option>
+            {coachings.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <select className="px-3 py-2 rounded-lg border bg-background" value={f.exam_id} onChange={(e) => setF({ ...f, exam_id: e.target.value })}>
+            <option value="">— Exam —</option>
+            {exams.map((e: any) => <option key={e.id} value={e.id}>{e.name}</option>)}
+          </select>
+          <select className="px-3 py-2 rounded-lg border bg-background" value={f.course_type} onChange={(e) => setF({ ...f, course_type: e.target.value as any })}>
+            <option value="youtube">YouTube video series (stays on our site)</option>
+            <option value="pdf">PDF / notes</option>
+            <option value="external">External redirect</option>
+          </select>
+          {f.course_type === "external" && (
+            <input className="px-3 py-2 rounded-lg border" placeholder="External URL" value={f.external_url} onChange={(e) => setF({ ...f, external_url: e.target.value })} />
+          )}
+          <div className="sm:col-span-2 flex items-center gap-4">
+            <label className="text-sm">Cover image:</label>
+            <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadCover(e.target.files[0])} />
+            {f.cover_url && <SignedImage bucket="course-covers" path={f.cover_url} alt="cover" className="h-14 w-20 rounded object-cover" />}
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={f.is_published} onChange={(e) => setF({ ...f, is_published: e.target.checked })} /> Published
+          </label>
+          <input type="number" placeholder="Display order" className="px-3 py-2 rounded-lg border" value={f.display_order}
+            onChange={(e) => setF({ ...f, display_order: Number(e.target.value) })} />
+        </div>
+        <Button onClick={save} disabled={busy}><Save className="h-4 w-4 mr-1" /> Save course</Button>
+      </div>
+
+      {!course._new && f.course_type === "youtube" && (
+        <div className="rounded-2xl border bg-card p-5 space-y-3">
+          <h3 className="font-semibold">YouTube lessons</h3>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input className="flex-1 px-3 py-2 rounded-lg border" placeholder="Lesson title"
+              value={newLesson.title} onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })} />
+            <input className="flex-1 px-3 py-2 rounded-lg border" placeholder="YouTube URL"
+              value={newLesson.youtube_url} onChange={(e) => setNewLesson({ ...newLesson, youtube_url: e.target.value })} />
+            <Button onClick={addLesson}><Plus className="h-4 w-4" /></Button>
+          </div>
+          <ul className="space-y-1">
+            {lessons.map((l, i) => (
+              <li key={l.id} className="flex items-center gap-3 p-2 rounded border">
+                <span className="text-xs text-muted-foreground w-6">{i + 1}</span>
+                <span className="flex-1 text-sm">{l.title}</span>
+                <span className="text-xs text-muted-foreground">{l.youtube_id}</span>
+                <Button variant="ghost" size="sm" onClick={() => delLesson(l.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {!course._new && (
+        <div className="rounded-2xl border bg-card p-5 space-y-3">
+          <h3 className="font-semibold">Attached files (PDFs, notes)</h3>
+          <input type="file" onChange={(e) => e.target.files?.[0] && addFile(e.target.files[0])} />
+          <ul className="space-y-1">
+            {files.map((x) => (
+              <li key={x.id} className="flex items-center gap-3 p-2 rounded border">
+                <span className="flex-1 text-sm">{x.name}</span>
+                <Button variant="ghost" size="sm" onClick={() => delFile(x.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============ Settings ============
+function SettingsAdmin() {
+  const [f, setF] = useState<any>({ telegram_url: "", hero_title: "", hero_subtitle: "", founders: "[]" });
+  useEffect(() => {
+    supabase.from("site_settings").select("*").eq("id", "singleton").maybeSingle().then(({ data }) => {
+      if (data) setF({ ...data, founders: JSON.stringify(data.founders ?? [], null, 2) });
+    });
+  }, []);
+  const save = async () => {
+    let founders: any = [];
+    try { founders = JSON.parse(f.founders); } catch { return toast.error("Founders JSON is invalid"); }
+    const { error } = await supabase.from("site_settings").upsert({
+      id: "singleton",
+      telegram_url: f.telegram_url, hero_title: f.hero_title, hero_subtitle: f.hero_subtitle, founders,
+    });
+    if (error) toast.error(error.message); else toast.success("Settings saved");
+  };
+  return (
+    <div className="rounded-2xl border bg-card p-5 space-y-3 max-w-2xl">
+      <h3 className="font-semibold">Site settings</h3>
+      <label className="block text-sm">Telegram channel URL
+        <input className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.telegram_url ?? ""} onChange={(e) => setF({ ...f, telegram_url: e.target.value })} />
+      </label>
+      <label className="block text-sm">Hero title
+        <input className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.hero_title ?? ""} onChange={(e) => setF({ ...f, hero_title: e.target.value })} />
+      </label>
+      <label className="block text-sm">Hero subtitle
+        <textarea className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.hero_subtitle ?? ""} onChange={(e) => setF({ ...f, hero_subtitle: e.target.value })} />
+      </label>
+      <label className="block text-sm">Founders (JSON array of {`{name, role, bio, avatar}`})
+        <textarea rows={8} className="w-full mt-1 px-3 py-2 rounded-lg border font-mono text-xs" value={f.founders}
+          onChange={(e) => setF({ ...f, founders: e.target.value })} />
+      </label>
+      <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Save</Button>
+    </div>
+  );
+}
