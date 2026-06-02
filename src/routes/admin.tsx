@@ -7,7 +7,54 @@ import { toast } from "sonner";
 import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
-import { Trash2, Plus, Save, LogOut, ShieldAlert } from "lucide-react";
+import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap } from "lucide-react";
+
+// Styled logo upload button — drag/drop + click, with preview
+function LogoUploader({
+  bucket, value, onChange, size = "lg",
+}: { bucket: string; value?: string | null; onChange: (path: string) => void; size?: "sm" | "lg" }) {
+  const [busy, setBusy] = useState(false);
+  const [drag, setDrag] = useState(false);
+  
+  const handle = async (file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Please pick an image");
+    setBusy(true);
+    try { const path = await uploadFile(bucket, file); onChange(path); toast.success("Logo uploaded"); }
+    catch (e: any) { toast.error(e.message); }
+    finally { setBusy(false); }
+  };
+  const dim = size === "lg" ? "h-32" : "h-20";
+  return (
+    <label
+      onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+      onDragLeave={() => setDrag(false)}
+      onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files?.[0]); }}
+      className={`group relative flex ${dim} cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed transition-all overflow-hidden ${
+        drag ? "border-primary bg-primary/10 scale-[1.02]" : "border-border bg-muted/40 hover:border-primary/60 hover:bg-primary/5"
+      }`}
+    >
+      <input type="file" accept="image/*" className="sr-only"
+        onChange={(e) => handle(e.target.files?.[0])} />
+      {value ? (
+        <>
+          <SignedImage bucket={bucket} path={value} alt="logo" className="h-full w-full object-contain p-2" />
+          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-background/80 opacity-0 group-hover:opacity-100 backdrop-blur-sm transition">
+            <Upload className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Replace logo</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-2 text-muted-foreground group-hover:text-primary transition">
+          {busy ? <Loader2 className="h-7 w-7 animate-spin" /> : <ImagePlus className="h-7 w-7" />}
+          <div className="text-sm font-medium">{busy ? "Uploading…" : "Click or drop logo here"}</div>
+          <div className="text-xs">PNG, JPG, SVG up to ~5MB</div>
+        </div>
+      )}
+    </label>
+  );
+}
+
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin | EduShare" }, { name: "robots", content: "noindex" }] }),
@@ -101,48 +148,68 @@ function CoachingsAdmin() {
     if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
   };
 
-  const upload = async (file: File, onDone: (p: string) => void) => {
-    try { const path = await uploadFile("coaching-logos", file); onDone(path); toast.success("Logo uploaded"); }
-    catch (e: any) { toast.error(e.message); }
-  };
+
+
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border bg-card p-5">
-        <h3 className="font-semibold mb-3">Add coaching</h3>
-        <div className="grid sm:grid-cols-2 gap-3">
-          <input className="px-3 py-2 rounded-lg border" placeholder="Name (e.g. Allen)"
-            value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input className="px-3 py-2 rounded-lg border" placeholder="Slug (e.g. allen)"
-            value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase() })} />
-          <textarea className="sm:col-span-2 px-3 py-2 rounded-lg border" placeholder="Description"
-            value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <input type="file" accept="image/*"
-            onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], (p) => setForm({ ...form, logo_url: p }))} />
-          {form.logo_url && <SignedImage bucket="coaching-logos" path={form.logo_url} alt="logo" className="h-12 w-12 rounded-lg object-cover" />}
+      <div className="rounded-2xl border bg-gradient-to-br from-card to-primary/5 p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="rounded-lg bg-primary/10 p-2"><GraduationCap className="h-5 w-5 text-primary" /></div>
+          <h3 className="font-display text-lg font-semibold">Add a coaching institute</h3>
         </div>
-        <Button className="mt-3" onClick={create} disabled={busy}><Plus className="h-4 w-4 mr-1" /> Add</Button>
+        <div className="grid lg:grid-cols-[1fr_280px] gap-5">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input className="px-3 py-2.5 rounded-lg border bg-background focus:ring-2 focus:ring-primary/30 outline-none transition" placeholder="Name (e.g. Allen)"
+              value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input className="px-3 py-2.5 rounded-lg border bg-background focus:ring-2 focus:ring-primary/30 outline-none transition" placeholder="Slug (e.g. allen)"
+              value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase() })} />
+            <textarea className="sm:col-span-2 px-3 py-2.5 rounded-lg border bg-background focus:ring-2 focus:ring-primary/30 outline-none transition min-h-[88px]" placeholder="Short description"
+              value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            <Button className="sm:col-span-2 mt-1" onClick={create} disabled={busy} size="lg">
+              {busy ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Plus className="h-4 w-4 mr-1.5" />}
+              Add coaching
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Logo</label>
+            <LogoUploader bucket="coaching-logos" value={form.logo_url}
+              onChange={(p) => setForm({ ...form, logo_url: p })} />
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((c) => (
-          <div key={c.id} className="rounded-xl border bg-card p-4 flex items-center gap-4">
-            <SignedImage bucket="coaching-logos" path={c.logo_url} alt={c.name} className="h-12 w-12 rounded-lg object-cover bg-muted" />
-            <div className="flex-1 grid sm:grid-cols-3 gap-2">
-              <input defaultValue={c.name} className="px-2 py-1.5 rounded border" onBlur={(e) => e.target.value !== c.name && update(c.id, { name: e.target.value })} />
-              <input defaultValue={c.slug} className="px-2 py-1.5 rounded border" onBlur={(e) => e.target.value !== c.slug && update(c.id, { slug: e.target.value })} />
-              <input type="number" defaultValue={c.display_order} className="px-2 py-1.5 rounded border w-24"
-                onBlur={(e) => Number(e.target.value) !== c.display_order && update(c.id, { display_order: Number(e.target.value) })} />
+          <div key={c.id} className="group rounded-2xl border bg-card p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <LogoUploader bucket="coaching-logos" value={c.logo_url}
+              onChange={(p) => update(c.id, { logo_url: p })} size="sm" />
+            <div className="mt-3 space-y-2">
+              <input defaultValue={c.name} className="w-full px-2.5 py-1.5 rounded-lg border bg-background text-sm font-medium"
+                onBlur={(e) => e.target.value !== c.name && update(c.id, { name: e.target.value })} />
+              <input defaultValue={c.slug} className="w-full px-2.5 py-1.5 rounded-lg border bg-background text-xs text-muted-foreground"
+                onBlur={(e) => e.target.value !== c.slug && update(c.id, { slug: e.target.value })} />
+              <div className="flex items-center gap-2">
+                <input type="number" defaultValue={c.display_order} className="px-2 py-1.5 rounded-lg border bg-background w-20 text-xs"
+                  onBlur={(e) => Number(e.target.value) !== c.display_order && update(c.id, { display_order: Number(e.target.value) })} />
+                <span className="text-xs text-muted-foreground">order</span>
+                <Button variant="ghost" size="sm" className="ml-auto" onClick={() => remove(c.id)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
             </div>
-            <input type="file" accept="image/*" className="text-xs w-32"
-              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], (p) => update(c.id, { logo_url: p }))} />
-            <Button variant="ghost" size="sm" onClick={() => remove(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
           </div>
         ))}
+        {items.length === 0 && (
+          <div className="sm:col-span-2 lg:col-span-3 text-center text-muted-foreground text-sm p-10 border rounded-2xl border-dashed">
+            No coachings yet — add your first above.
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
 
 // ============ Exams ============
 function ExamsAdmin() {
