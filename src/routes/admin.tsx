@@ -148,10 +148,8 @@ function CoachingsAdmin() {
     if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
   };
 
-  const upload = async (file: File, onDone: (p: string) => void) => {
-    try { const path = await uploadFile("coaching-logos", file); onDone(path); toast.success("Logo uploaded"); }
-    catch (e: any) { toast.error(e.message); }
-  };
+
+
 
   return (
     <div className="space-y-6">
