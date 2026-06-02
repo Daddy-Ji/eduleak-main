@@ -7,7 +7,54 @@ import { toast } from "sonner";
 import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
-import { Trash2, Plus, Save, LogOut, ShieldAlert } from "lucide-react";
+import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap } from "lucide-react";
+
+// Styled logo upload button — drag/drop + click, with preview
+function LogoUploader({
+  bucket, value, onChange, size = "lg",
+}: { bucket: string; value?: string | null; onChange: (path: string) => void; size?: "sm" | "lg" }) {
+  const [busy, setBusy] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const inputRef = useState<HTMLInputElement | null>(null);
+  const handle = async (file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Please pick an image");
+    setBusy(true);
+    try { const path = await uploadFile(bucket, file); onChange(path); toast.success("Logo uploaded"); }
+    catch (e: any) { toast.error(e.message); }
+    finally { setBusy(false); }
+  };
+  const dim = size === "lg" ? "h-32" : "h-20";
+  return (
+    <label
+      onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+      onDragLeave={() => setDrag(false)}
+      onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files?.[0]); }}
+      className={`group relative flex ${dim} cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed transition-all overflow-hidden ${
+        drag ? "border-primary bg-primary/10 scale-[1.02]" : "border-border bg-muted/40 hover:border-primary/60 hover:bg-primary/5"
+      }`}
+    >
+      <input type="file" accept="image/*" className="sr-only"
+        onChange={(e) => handle(e.target.files?.[0])} />
+      {value ? (
+        <>
+          <SignedImage bucket={bucket} path={value} alt="logo" className="h-full w-full object-contain p-2" />
+          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-background/80 opacity-0 group-hover:opacity-100 backdrop-blur-sm transition">
+            <Upload className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Replace logo</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-2 text-muted-foreground group-hover:text-primary transition">
+          {busy ? <Loader2 className="h-7 w-7 animate-spin" /> : <ImagePlus className="h-7 w-7" />}
+          <div className="text-sm font-medium">{busy ? "Uploading…" : "Click or drop logo here"}</div>
+          <div className="text-xs">PNG, JPG, SVG up to ~5MB</div>
+        </div>
+      )}
+    </label>
+  );
+}
+
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin | EduShare" }, { name: "robots", content: "noindex" }] }),
