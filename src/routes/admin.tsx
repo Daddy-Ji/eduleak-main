@@ -33,8 +33,8 @@ function AdminPage() {
         <ShieldAlert className="h-10 w-10 mx-auto text-destructive mb-3" />
         <h1 className="font-display text-2xl">Admin access required</h1>
         <p className="text-muted-foreground mt-2">
-          Your account isn't an admin. The pre-seeded admin email is <code className="bg-muted px-1.5 py-0.5 rounded">admin@edushare.app</code> —
-          sign up with that address (you can change it later).
+          Your account isn't an admin. The pre-seeded admin email is <code className="bg-muted px-1.5 py-0.5 rounded">business.pokesparky@gmail.com</code> —
+          sign up with that address to gain admin access.
         </p>
         <Link to="/" className="inline-block mt-4 text-primary hover:underline">Go home</Link>
       </div>
