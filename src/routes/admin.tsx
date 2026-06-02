@@ -15,7 +15,7 @@ function LogoUploader({
 }: { bucket: string; value?: string | null; onChange: (path: string) => void; size?: "sm" | "lg" }) {
   const [busy, setBusy] = useState(false);
   const [drag, setDrag] = useState(false);
-  const inputRef = useState<HTMLInputElement | null>(null);
+  
   const handle = async (file?: File | null) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) return toast.error("Please pick an image");
