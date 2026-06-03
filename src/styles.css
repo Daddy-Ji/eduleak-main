@@ -126,4 +126,24 @@
     color: transparent;
   }
   .shadow-soft { box-shadow: 0 10px 40px -15px oklch(0.42 0.08 195 / 0.25); }
+
+  /* Continuous ambient animations */
+  @keyframes float-slow   { 0%,100% { transform: translateY(0) translateX(0); } 50% { transform: translateY(-14px) translateX(8px); } }
+  @keyframes float-medium { 0%,100% { transform: translateY(0) rotate(0deg); }   50% { transform: translateY(-18px) rotate(8deg); } }
+  @keyframes float-fast   { 0%,100% { transform: translateY(0) translateX(0) rotate(0deg); } 50% { transform: translateY(-10px) translateX(-6px) rotate(-6deg); } }
+  @keyframes blob-slow    { 0%,100% { transform: translate(0,0) scale(1); }      50% { transform: translate(40px,-30px) scale(1.08); } }
+  @keyframes blob-slower  { 0%,100% { transform: translate(0,0) scale(1); }      50% { transform: translate(-50px,40px) scale(1.12); } }
+  @keyframes twinkle      { 0%,100% { opacity: 0.3; transform: scale(0.8); }     50% { opacity: 1;   transform: scale(1.15); } }
+
+  .animate-float-slow   { animation: float-slow 9s ease-in-out infinite; }
+  .animate-float-medium { animation: float-medium 7s ease-in-out infinite; }
+  .animate-float-fast   { animation: float-fast 5s ease-in-out infinite; }
+  .animate-blob-slow    { animation: blob-slow 22s ease-in-out infinite; }
+  .animate-blob-slower  { animation: blob-slower 28s ease-in-out infinite; }
+  .animate-twinkle      { animation: twinkle 3.5s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float-slow, .animate-float-medium, .animate-float-fast,
+    .animate-blob-slow, .animate-blob-slower, .animate-twinkle { animation: none; }
+  }
 }
