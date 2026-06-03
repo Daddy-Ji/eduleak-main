@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { getHomeData } from "@/lib/courses.functions";
 import { CourseCard } from "@/components/CourseCard";
 import { SignedImage } from "@/components/SignedImage";
+import { HeroIllustration } from "@/components/HeroIllustration";
 import { ArrowRight, Sparkles, BookOpen, Users, Award } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -36,44 +37,66 @@ function HomePage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="max-w-3xl"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/40 text-accent-foreground text-xs font-medium mb-5">
-              <Sparkles className="h-3.5 w-3.5" /> 100% free • No ads • No paywalls
-            </div>
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight">
-              {settings?.hero_title ?? "Free quality education for every Indian student."}
-            </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              {settings?.hero_subtitle ?? "Curated lessons from India's best coachings, organised by exam. Watch, read and learn — all in one calm, distraction-free place."}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/courses" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
-                Browse courses <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/about" className="inline-flex items-center px-6 py-3 rounded-xl border bg-card hover:bg-muted font-medium transition">
-                Meet the team
-              </Link>
-            </div>
-          </motion.div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-16 sm:pt-20 sm:pb-24">
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15, duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/50 text-accent-foreground text-xs font-medium mb-5"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> 100% free • No ads • No paywalls
+              </motion.div>
+              <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.04] tracking-tight">
+                {settings?.hero_title ?? (
+                  <>
+                    Free quality education for every{" "}
+                    <span className="text-gradient">Indian student.</span>
+                  </>
+                )}
+              </h1>
+              <motion.p
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.6 }}
+                className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed"
+              >
+                {settings?.hero_subtitle ?? "Curated lessons from India's best coachings, organised by exam. Watch, read and learn — all in one calm, distraction-free place."}
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }}
+                className="mt-8 flex flex-wrap gap-3"
+              >
+                <Link to="/courses" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 hover:-translate-y-0.5 transition">
+                  Browse courses <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link to="/about" className="inline-flex items-center px-6 py-3 rounded-xl border bg-card hover:bg-muted font-medium transition">
+                  Meet the team
+                </Link>
+              </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.6 }}
-            className="mt-16 grid grid-cols-3 gap-4 max-w-xl"
-          >
-            {stats.map((s) => (
-              <div key={s.label} className="rounded-2xl border bg-card p-4 text-center">
-                <s.icon className="h-5 w-5 mx-auto text-primary mb-2" />
-                <div className="font-display text-2xl font-semibold">{s.value}</div>
-                <div className="text-xs text-muted-foreground">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.85, duration: 0.6 }}
+                className="mt-10 grid grid-cols-3 gap-3 sm:gap-4 max-w-lg"
+              >
+                {stats.map((s) => (
+                  <div key={s.label} className="rounded-2xl border bg-card/80 backdrop-blur p-4 text-center">
+                    <s.icon className="h-5 w-5 mx-auto text-primary mb-2" />
+                    <div className="font-display text-2xl font-semibold">{s.value}</div>
+                    <div className="text-xs text-muted-foreground">{s.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <div className="order-first lg:order-none">
+              <HeroIllustration />
+            </div>
+          </div>
         </div>
       </section>
+
 
       {/* Coachings strip */}
       {coachings.length > 0 && (
