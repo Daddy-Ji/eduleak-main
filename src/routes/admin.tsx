@@ -61,12 +61,12 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "courses" | "coachings" | "exams" | "settings";
+type Tab = "stats" | "courses" | "coachings" | "exams" | "import" | "settings";
 
 function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Tab>("courses");
+  const [tab, setTab] = useState<Tab>("stats");
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -97,7 +97,7 @@ function AdminPage() {
         </Button>
       </div>
       <div className="flex gap-1 border-b mb-6 overflow-auto">
-        {(["courses", "coachings", "exams", "settings"] as Tab[]).map((t) => (
+        {(["stats", "courses", "coachings", "exams", "import", "settings"] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize transition ${
               tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
@@ -106,9 +106,11 @@ function AdminPage() {
           </button>
         ))}
       </div>
+      {tab === "stats" && <StatsAdmin />}
       {tab === "courses" && <CoursesAdmin />}
       {tab === "coachings" && <CoachingsAdmin />}
       {tab === "exams" && <ExamsAdmin />}
+      {tab === "import" && <ImportAdmin />}
       {tab === "settings" && <SettingsAdmin />}
     </div>
   );
