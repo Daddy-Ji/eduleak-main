@@ -18,6 +18,7 @@ import { getSiteSettings } from "@/lib/courses.functions";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 function NotFoundComponent() {
   return (
@@ -98,7 +99,8 @@ function AppShell() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {!isAdmin && <AnimatedBackground />}
       <Header />
       <main className="flex-1">
         <Outlet />
