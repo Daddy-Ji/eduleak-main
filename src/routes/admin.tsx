@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
-import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap } from "lucide-react";
+import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap, BookOpen, Video, FileText, Layers, TrendingUp, ListVideo, FileJson, Wand2 } from "lucide-react";
 
 // Styled logo upload button — drag/drop + click, with preview
 function LogoUploader({
