@@ -517,10 +517,7 @@ function SettingsAdmin() {
       <div className="grid sm:grid-cols-2 gap-3">{text("who_title", "Title")}{text("who_subtitle", "Subtitle")}</div>
       <h4 className="font-semibold pt-2">Ready to Start CTA</h4>
       <div className="grid sm:grid-cols-2 gap-3">{text("cta_title", "Title")}{text("cta_button_text", "Button text")}{text("cta_subtitle", "Subtitle")}{text("cta_button_url", "Button URL")}</div>
-      <label className="block text-sm">Founders (JSON array of {`{name, role, bio, avatar}`})
-        <textarea rows={6} className="w-full mt-1 px-3 py-2 rounded-lg border font-mono text-xs" value={f.founders}
-          onChange={(e) => setF({ ...f, founders: e.target.value })} />
-      </label>
+      <FoundersEditor value={f.founders} onChange={(v) => setF({ ...f, founders: v })} />
       <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Save all settings</Button>
     </div>
   );
