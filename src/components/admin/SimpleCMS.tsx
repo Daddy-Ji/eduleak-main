@@ -2,10 +2,47 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, ImagePlus, Upload, Loader2 } from "lucide-react";
+import { uploadFile } from "@/lib/storage";
+import { SignedImage } from "@/components/SignedImage";
 
 // Generic CRUD for the simple homepage CMS tables
-type Field = { key: string; label: string; type?: "text" | "textarea" | "number" | "checkbox" | "url" };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "number" | "checkbox" | "url" | "logo"; bucket?: string };
+
+function GalleryUpload({ bucket, value, onChange, label }: { bucket: string; value?: string | null; onChange: (p: string) => void; label: string }) {
+  const [busy, setBusy] = useState(false);
+  const handle = async (file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Pick an image");
+    setBusy(true);
+    try { const p = await uploadFile(bucket, file); onChange(p); toast.success("Uploaded"); }
+    catch (e: any) { toast.error(e.message); }
+    finally { setBusy(false); }
+  };
+  const isUrl = value && value.startsWith("http");
+  return (
+    <div className="space-y-2">
+      <label className="group relative flex h-28 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/40 hover:border-primary/60 hover:bg-primary/5 overflow-hidden transition">
+        <input type="file" accept="image/*" className="sr-only" onChange={(e) => handle(e.target.files?.[0])} />
+        {value ? (
+          <>
+            {isUrl ? <img src={value} alt="" className="h-full w-full object-contain p-2" /> :
+              <SignedImage bucket={bucket} path={value} alt="" className="h-full w-full object-contain p-2" />}
+            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-background/80 opacity-0 group-hover:opacity-100 backdrop-blur-sm transition">
+              <Upload className="h-4 w-4 text-primary" /><span className="text-xs font-medium">Replace from gallery</span>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-1 text-muted-foreground group-hover:text-primary transition">
+            {busy ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
+            <div className="text-xs font-medium">{busy ? "Uploading…" : `Pick ${label} from gallery`}</div>
+          </div>
+        )}
+      </label>
+      <input className="w-full px-2 py-1.5 rounded border bg-background text-xs" value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder="or paste image URL" />
+    </div>
+  );
+}
 
 export function SimpleCMS({ table, title, fields, defaultRow }: {
   table: string; title: string; fields: Field[]; defaultRow: Record<string, any>;
