@@ -569,6 +569,9 @@ function FoundersEditor({ value, onChange }: { value: string; onChange: (v: stri
       {parsed.length === 0 && <div className="text-center text-sm text-muted-foreground p-6 border-dashed border rounded-xl">No team members yet.</div>}
     </div>
   );
+}
+
+
 
 // ============ Stats ============
 function StatsAdmin() {
