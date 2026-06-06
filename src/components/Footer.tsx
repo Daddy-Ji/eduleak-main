@@ -10,7 +10,7 @@ export function Footer({ telegramUrl }: { telegramUrl?: string | null }) {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <GraduationCap className="h-5 w-5" />
             </span>
-            EduShare
+            EduLeak
           </div>
           <p className="mt-3 text-sm text-muted-foreground max-w-md">
             A calm, ad-free home for India's best free educational content. Curated lessons from leading coachings —
@@ -40,7 +40,7 @@ export function Footer({ telegramUrl }: { telegramUrl?: string | null }) {
         </div>
       </div>
       <div className="border-t py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} EduShare. Made for learners, by learners.
+        © {new Date().getFullYear()} EduLeak. Made for learners, by learners.
       </div>
     </footer>
   );

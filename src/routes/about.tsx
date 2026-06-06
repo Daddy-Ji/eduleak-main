@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { getSiteSettings } from "@/lib/courses.functions";
 import { Sparkles } from "lucide-react";
+import { SignedImage } from "@/components/SignedImage";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "Masterminds Behind EduShare" },
+      { title: "Masterminds Behind EduLeak" },
       { name: "description", content: "Meet the small team obsessed with making world-class education free for every Indian student." },
       { rel: "canonical", href: "/about" } as any,
     ],
@@ -25,9 +26,9 @@ function AboutPage() {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/40 text-accent-foreground text-xs font-medium mb-4">
           <Sparkles className="h-3.5 w-3.5" /> Our story
         </div>
-        <h1 className="font-display text-5xl sm:text-6xl font-semibold leading-tight">The Masterminds Behind EduShare</h1>
+        <h1 className="font-display text-5xl sm:text-6xl font-semibold leading-tight">The Masterminds Behind EduLeak</h1>
         <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
-          EduShare began with a simple belief: every student in India deserves access to the same world-class
+          EduLeak began with a simple belief: every student in India deserves access to the same world-class
           teachers, regardless of their pin code or family income. We curate the best free content from across
           the web, organise it by exam and coaching, and present it in a calm, distraction-free place.
         </p>
@@ -41,9 +42,15 @@ function AboutPage() {
             className="rounded-3xl border bg-card p-6 hover:shadow-soft transition"
           >
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-coral flex items-center justify-center text-primary-foreground font-display font-bold text-2xl">
-                {f.name?.[0]}
-              </div>
+              {f.avatar ? (
+                f.avatar.startsWith("http")
+                  ? <img src={f.avatar} alt={f.name} className="h-16 w-16 rounded-full object-cover border" />
+                  : <SignedImage bucket="coaching-logos" path={f.avatar} alt={f.name} className="h-16 w-16 rounded-full object-cover border" />
+              ) : (
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-coral flex items-center justify-center text-primary-foreground font-display font-bold text-2xl">
+                  {f.name?.[0]}
+                </div>
+              )}
               <div>
                 <h3 className="font-display text-xl font-semibold">{f.name}</h3>
                 <p className="text-sm text-primary">{f.role}</p>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, X } from "lucide-react";
 
-const KEY = "edushare_telegram_session_seen";
+const KEY = "eduleak_telegram_session_seen";
 
 export function TelegramPopup({ url }: { url?: string | null }) {
   const [open, setOpen] = useState(false);

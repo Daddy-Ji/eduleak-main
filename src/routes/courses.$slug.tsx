@@ -17,8 +17,8 @@ export const Route = createFileRoute("/courses/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: loaderData ? [
-      { title: `${loaderData.course.title} | EduShare` },
-      { name: "description", content: loaderData.course.description ?? `Free course on EduShare: ${loaderData.course.title}` },
+      { title: `${loaderData.course.title} | EduLeak` },
+      { name: "description", content: loaderData.course.description ?? `Free course on EduLeak: ${loaderData.course.title}` },
       { property: "og:title", content: loaderData.course.title },
       { property: "og:description", content: loaderData.course.description ?? "" },
       { rel: "canonical", href: `/courses/${loaderData.course.slug}` } as any,
@@ -38,7 +38,7 @@ function CourseDetail() {
     "@type": "Course",
     "name": course.title,
     "description": course.description ?? undefined,
-    "provider": { "@type": "Organization", "name": "EduShare" },
+    "provider": { "@type": "Organization", "name": "EduLeak" },
   };
 
   return (

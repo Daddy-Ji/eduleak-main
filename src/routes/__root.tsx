@@ -55,10 +55,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EduShare — Free Quality Education for Indian Students" },
+      { title: "EduLeak — Free Quality Education for Indian Students" },
       { name: "description", content: "Curated free courses from India's top coachings — JEE, NEET, UPSC and more. Calm, ad-free, and organised." },
-      { name: "author", content: "EduShare" },
-      { property: "og:title", content: "EduShare — Free Quality Education" },
+      { name: "author", content: "EduLeak" },
+      { property: "og:title", content: "EduLeak — Free Quality Education" },
       { property: "og:description", content: "Curated free courses from India's top coachings, all in one calm place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -102,7 +102,7 @@ function AppShell() {
   return (
     <div className="min-h-screen flex flex-col relative">
       {!isAdmin && <AnimatedBackground />}
-      {!isAdmin && (settings?.intro_animation_enabled !== false) && <IntroAnimation siteName={(settings as any)?.site_name ?? "EduShare"} />}
+      {!isAdmin && (settings?.intro_animation_enabled !== false) && <IntroAnimation siteName={(settings as any)?.site_name ?? "EduLeak"} />}
       <Header />
       <main className="flex-1">
         <Outlet />

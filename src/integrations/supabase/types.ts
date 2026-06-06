@@ -336,6 +336,7 @@ export type Database = {
           id: string
           is_active: boolean
           link_url: string | null
+          logo_url: string | null
           subtitle: string | null
           title: string
           whatsapp_url: string | null
@@ -349,6 +350,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           link_url?: string | null
+          logo_url?: string | null
           subtitle?: string | null
           title: string
           whatsapp_url?: string | null
@@ -362,6 +364,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           link_url?: string | null
+          logo_url?: string | null
           subtitle?: string | null
           title?: string
           whatsapp_url?: string | null
