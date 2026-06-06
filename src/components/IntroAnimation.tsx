@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap } from "lucide-react";
 
-const KEY = "edushare_intro_seen";
+const KEY = "eduleak_intro_seen";
 
-export function IntroAnimation({ siteName = "EduShare" }: { siteName?: string }) {
+export function IntroAnimation({ siteName = "EduLeak" }: { siteName?: string }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {

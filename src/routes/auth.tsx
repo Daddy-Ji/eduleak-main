@@ -11,8 +11,8 @@ import { GraduationCap } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in | EduShare" },
-      { name: "description", content: "Sign in to bookmark courses and access your EduShare dashboard." },
+      { title: "Sign in | EduLeak" },
+      { name: "description", content: "Sign in to bookmark courses and access your EduLeak dashboard." },
     ],
   }),
   component: AuthPage,
@@ -107,7 +107,7 @@ function AuthPage() {
           </form>
 
           <p className="mt-5 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? "New to EduShare?" : "Already have an account?"}{" "}
+            {mode === "signin" ? "New to EduLeak?" : "Already have an account?"}{" "}
             <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
               className="text-primary font-medium hover:underline">
               {mode === "signin" ? "Create one" : "Sign in"}

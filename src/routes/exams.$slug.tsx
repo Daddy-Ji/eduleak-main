@@ -10,8 +10,8 @@ export const Route = createFileRoute("/exams/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: loaderData ? [
-      { title: `${loaderData.exam.name} Free Courses & Prep | EduShare` },
-      { name: "description", content: loaderData.exam.description ?? `Free ${loaderData.exam.name} preparation courses on EduShare.` },
+      { title: `${loaderData.exam.name} Free Courses & Prep | EduLeak` },
+      { name: "description", content: loaderData.exam.description ?? `Free ${loaderData.exam.name} preparation courses on EduLeak.` },
       { rel: "canonical", href: `/exams/${loaderData.exam.slug}` } as any,
     ] : [],
   }),

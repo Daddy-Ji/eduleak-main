@@ -12,7 +12,7 @@ import { ArrowRight, Sparkles, BookOpen, Users, Award } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EduShare — Free Courses for JEE, NEET, UPSC & more" },
+      { title: "EduLeak — Free Courses for JEE, NEET, UPSC & more" },
       { name: "description", content: "Discover free, curated courses from India's top coachings. Calm UI, zero distractions." },
     ],
   }),

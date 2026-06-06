@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export const Route = createFileRoute("/coachings/")({
   head: () => ({
     meta: [
-      { title: "Coachings | EduShare" },
+      { title: "Coachings | EduLeak" },
       { name: "description", content: "Free courses organised by India's top coaching institutes." },
       { rel: "canonical", href: "/coachings" } as any,
     ],

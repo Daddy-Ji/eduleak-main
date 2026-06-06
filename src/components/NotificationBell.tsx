@@ -3,7 +3,7 @@ import { Bell, BellRing, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SEEN_KEY = "edushare_notifs_seen";
+const SEEN_KEY = "eduleak_notifs_seen";
 
 type Notif = { id: string; title: string; body: string | null; link_url: string | null; created_at: string };
 

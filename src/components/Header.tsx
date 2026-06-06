@@ -42,7 +42,7 @@ export function Header() {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <GraduationCap className="h-5 w-5" />
             </span>
-            <span>EduShare</span>
+            <span>EduLeak</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 ml-6">

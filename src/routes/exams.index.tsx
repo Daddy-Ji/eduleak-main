@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 export const Route = createFileRoute("/exams/")({
   head: () => ({
     meta: [
-      { title: "Exams | EduShare" },
+      { title: "Exams | EduLeak" },
       { name: "description", content: "Free preparation for JEE, NEET, UPSC and other top Indian exams." },
       { rel: "canonical", href: "/exams" } as any,
     ],

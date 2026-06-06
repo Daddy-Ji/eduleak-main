@@ -8,10 +8,10 @@ import { Search } from "lucide-react";
 export const Route = createFileRoute("/courses")({
   head: () => ({
     meta: [
-      { title: "All Free Courses | EduShare" },
-      { name: "description", content: "Browse every free course on EduShare. Filter by coaching, exam, or content type." },
-      { property: "og:title", content: "All Free Courses | EduShare" },
-      { property: "og:description", content: "Browse every free course on EduShare." },
+      { title: "All Free Courses | EduLeak" },
+      { name: "description", content: "Browse every free course on EduLeak. Filter by coaching, exam, or content type." },
+      { property: "og:title", content: "All Free Courses | EduLeak" },
+      { property: "og:description", content: "Browse every free course on EduLeak." },
       { rel: "canonical", href: "/courses" } as any,
     ],
   }),
@@ -40,7 +40,7 @@ function CoursesPage() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
       <h1 className="font-display text-4xl sm:text-5xl font-semibold">All courses</h1>
       <p className="text-muted-foreground mt-2 max-w-2xl">
-        Every lesson on EduShare, organised by exam and coaching. Use the filters to narrow it down.
+        Every lesson on EduLeak, organised by exam and coaching. Use the filters to narrow it down.
       </p>
 
       <div className="mt-8 grid gap-3 lg:grid-cols-[1fr_auto_auto_auto]">
