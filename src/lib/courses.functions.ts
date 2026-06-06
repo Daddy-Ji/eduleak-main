@@ -10,7 +10,7 @@ async function admin() {
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await admin();
-  const [settings, coachings, exams, latest] = await Promise.all([
+  const [settings, coachings, exams, latest, portals, institutes, why, audience] = await Promise.all([
     sb.from("site_settings").select("*").eq("id", "singleton").maybeSingle(),
     sb.from("coachings").select("*").order("display_order"),
     sb.from("exams").select("*").order("display_order"),
@@ -19,12 +19,20 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(8),
+    sb.from("portals").select("*").eq("is_active", true).order("display_order"),
+    sb.from("featured_institutes").select("*").order("display_order"),
+    sb.from("why_us").select("*").order("display_order"),
+    sb.from("audience").select("*").order("display_order"),
   ]);
   return {
     settings: settings.data,
     coachings: coachings.data ?? [],
     exams: exams.data ?? [],
     latest: (latest.data ?? []) as any[],
+    portals: portals.data ?? [],
+    institutes: institutes.data ?? [],
+    why: why.data ?? [],
+    audience: audience.data ?? [],
   };
 });
 

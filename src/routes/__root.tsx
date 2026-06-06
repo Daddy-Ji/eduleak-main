@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { IntroAnimation } from "@/components/IntroAnimation";
 
 function NotFoundComponent() {
   return (
@@ -101,12 +102,13 @@ function AppShell() {
   return (
     <div className="min-h-screen flex flex-col relative">
       {!isAdmin && <AnimatedBackground />}
+      {!isAdmin && (settings?.intro_animation_enabled !== false) && <IntroAnimation siteName={(settings as any)?.site_name ?? "EduShare"} />}
       <Header />
       <main className="flex-1">
         <Outlet />
       </main>
       {!isAdmin && <Footer telegramUrl={settings?.telegram_url} />}
-      {!isAdmin && <TelegramPopup url={settings?.telegram_url} />}
+      {!isAdmin && (settings?.telegram_popup_enabled !== false) && <TelegramPopup url={settings?.telegram_url} />}
       <Toaster richColors position="top-right" />
     </div>
   );
