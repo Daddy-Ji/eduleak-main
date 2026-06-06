@@ -42,9 +42,15 @@ function AboutPage() {
             className="rounded-3xl border bg-card p-6 hover:shadow-soft transition"
           >
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-coral flex items-center justify-center text-primary-foreground font-display font-bold text-2xl">
-                {f.name?.[0]}
-              </div>
+              {f.avatar ? (
+                f.avatar.startsWith("http")
+                  ? <img src={f.avatar} alt={f.name} className="h-16 w-16 rounded-full object-cover border" />
+                  : <SignedImage bucket="coaching-logos" path={f.avatar} alt={f.name} className="h-16 w-16 rounded-full object-cover border" />
+              ) : (
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-coral flex items-center justify-center text-primary-foreground font-display font-bold text-2xl">
+                  {f.name?.[0]}
+                </div>
+              )}
               <div>
                 <h3 className="font-display text-xl font-semibold">{f.name}</h3>
                 <p className="text-sm text-primary">{f.role}</p>
