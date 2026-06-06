@@ -2,24 +2,20 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, X } from "lucide-react";
 
-const KEY = "edushare_telegram_dismissed_at";
-const REMIND_AFTER_DAYS = 7;
+const KEY = "edushare_telegram_session_seen";
 
 export function TelegramPopup({ url }: { url?: string | null }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!url) return;
-    const ts = Number(localStorage.getItem(KEY) ?? "0");
-    const stale = Date.now() - ts > REMIND_AFTER_DAYS * 86400 * 1000;
-    if (stale) {
-      const t = setTimeout(() => setOpen(true), 1200);
-      return () => clearTimeout(t);
-    }
+    if (sessionStorage.getItem(KEY)) return;
+    const t = setTimeout(() => setOpen(true), 1500);
+    return () => clearTimeout(t);
   }, [url]);
 
   const dismiss = () => {
-    localStorage.setItem(KEY, String(Date.now()));
+    sessionStorage.setItem(KEY, "1");
     setOpen(false);
   };
 

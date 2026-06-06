@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      audience: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           course_id: string
@@ -204,6 +231,33 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_institutes: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          link_url: string | null
+          logo_url: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          link_url?: string | null
+          logo_url?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          link_url?: string | null
+          logo_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           course_id: string
@@ -245,6 +299,75 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          link_url: string | null
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          title: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      portals: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          embed_in_app: boolean
+          emoji: string | null
+          id: string
+          is_active: boolean
+          link_url: string | null
+          subtitle: string | null
+          title: string
+          whatsapp_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          embed_in_app?: boolean
+          emoji?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          subtitle?: string | null
+          title: string
+          whatsapp_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          embed_in_app?: boolean
+          emoji?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          subtitle?: string | null
+          title?: string
+          whatsapp_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -271,28 +394,82 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          cta_button_text: string | null
+          cta_button_url: string | null
+          cta_subtitle: string | null
+          cta_title: string | null
+          footer_text: string | null
           founders: Json
           hero_subtitle: string | null
           hero_title: string | null
           id: string
+          institutes_subtitle: string | null
+          institutes_title: string | null
+          intro_animation_enabled: boolean | null
+          portals_subtitle: string | null
+          portals_title: string | null
+          site_name: string | null
+          tagline: string | null
+          telegram_popup_enabled: boolean | null
+          telegram_popup_every_visit: boolean | null
           telegram_url: string | null
           updated_at: string
+          who_subtitle: string | null
+          who_title: string | null
+          why_subtitle: string | null
+          why_title: string | null
         }
         Insert: {
+          cta_button_text?: string | null
+          cta_button_url?: string | null
+          cta_subtitle?: string | null
+          cta_title?: string | null
+          footer_text?: string | null
           founders?: Json
           hero_subtitle?: string | null
           hero_title?: string | null
           id?: string
+          institutes_subtitle?: string | null
+          institutes_title?: string | null
+          intro_animation_enabled?: boolean | null
+          portals_subtitle?: string | null
+          portals_title?: string | null
+          site_name?: string | null
+          tagline?: string | null
+          telegram_popup_enabled?: boolean | null
+          telegram_popup_every_visit?: boolean | null
           telegram_url?: string | null
           updated_at?: string
+          who_subtitle?: string | null
+          who_title?: string | null
+          why_subtitle?: string | null
+          why_title?: string | null
         }
         Update: {
+          cta_button_text?: string | null
+          cta_button_url?: string | null
+          cta_subtitle?: string | null
+          cta_title?: string | null
+          footer_text?: string | null
           founders?: Json
           hero_subtitle?: string | null
           hero_title?: string | null
           id?: string
+          institutes_subtitle?: string | null
+          institutes_title?: string | null
+          intro_animation_enabled?: boolean | null
+          portals_subtitle?: string | null
+          portals_title?: string | null
+          site_name?: string | null
+          tagline?: string | null
+          telegram_popup_enabled?: boolean | null
+          telegram_popup_every_visit?: boolean | null
           telegram_url?: string | null
           updated_at?: string
+          who_subtitle?: string | null
+          who_title?: string | null
+          why_subtitle?: string | null
+          why_title?: string | null
         }
         Relationships: []
       }
@@ -314,6 +491,33 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      why_us: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          title?: string
         }
         Relationships: []
       }

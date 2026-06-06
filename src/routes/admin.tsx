@@ -8,6 +8,7 @@ import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
 import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap, BookOpen, Video, FileText, Layers, TrendingUp, ListVideo, FileJson, Wand2 } from "lucide-react";
+import { PortalsAdmin, InstitutesAdmin, WhyAdmin, AudienceAdmin, NotificationsAdmin } from "@/components/admin/SimpleCMS";
 
 // Styled logo upload button — drag/drop + click, with preview
 function LogoUploader({
@@ -61,7 +62,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "stats" | "courses" | "coachings" | "exams" | "import" | "settings";
+type Tab = "stats" | "courses" | "coachings" | "exams" | "portals" | "institutes" | "why" | "audience" | "notifications" | "import" | "settings";
 
 function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -97,9 +98,9 @@ function AdminPage() {
         </Button>
       </div>
       <div className="flex gap-1 border-b mb-6 overflow-auto">
-        {(["stats", "courses", "coachings", "exams", "import", "settings"] as Tab[]).map((t) => (
+        {(["stats", "courses", "coachings", "exams", "portals", "institutes", "why", "audience", "notifications", "import", "settings"] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize transition ${
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize whitespace-nowrap transition ${
               tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
             }`}>
             {t}
@@ -110,6 +111,11 @@ function AdminPage() {
       {tab === "courses" && <CoursesAdmin />}
       {tab === "coachings" && <CoachingsAdmin />}
       {tab === "exams" && <ExamsAdmin />}
+      {tab === "portals" && <PortalsAdmin />}
+      {tab === "institutes" && <InstitutesAdmin />}
+      {tab === "why" && <WhyAdmin />}
+      {tab === "audience" && <AudienceAdmin />}
+      {tab === "notifications" && <NotificationsAdmin />}
       {tab === "import" && <ImportAdmin />}
       {tab === "settings" && <SettingsAdmin />}
     </div>
@@ -463,7 +469,7 @@ function CourseEditor({ course, coachings, exams, onDone }: any) {
 
 // ============ Settings ============
 function SettingsAdmin() {
-  const [f, setF] = useState<any>({ telegram_url: "", hero_title: "", hero_subtitle: "", founders: "[]" });
+  const [f, setF] = useState<any>({ telegram_url: "", hero_title: "", hero_subtitle: "", site_name: "EduShare", tagline: "", portals_title: "", portals_subtitle: "", institutes_title: "", institutes_subtitle: "", why_title: "", why_subtitle: "", who_title: "", who_subtitle: "", cta_title: "", cta_subtitle: "", cta_button_text: "", cta_button_url: "", footer_text: "", intro_animation_enabled: true, telegram_popup_enabled: true, founders: "[]" });
   useEffect(() => {
     supabase.from("site_settings").select("*").eq("id", "singleton").maybeSingle().then(({ data }) => {
       if (data) setF({ ...data, founders: JSON.stringify(data.founders ?? [], null, 2) });
@@ -472,29 +478,50 @@ function SettingsAdmin() {
   const save = async () => {
     let founders: any = [];
     try { founders = JSON.parse(f.founders); } catch { return toast.error("Founders JSON is invalid"); }
-    const { error } = await supabase.from("site_settings").upsert({
-      id: "singleton",
-      telegram_url: f.telegram_url, hero_title: f.hero_title, hero_subtitle: f.hero_subtitle, founders,
-    });
+    const { founders: _, ...rest } = f;
+    const { error } = await supabase.from("site_settings").upsert({ id: "singleton", ...rest, founders });
     if (error) toast.error(error.message); else toast.success("Settings saved");
   };
+  const text = (k: string, label: string, multiline = false) => (
+    <label className="block text-sm">{label}
+      {multiline ? (
+        <textarea className="w-full mt-1 px-3 py-2 rounded-lg border bg-background" value={f[k] ?? ""} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
+      ) : (
+        <input className="w-full mt-1 px-3 py-2 rounded-lg border bg-background" value={f[k] ?? ""} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
+      )}
+    </label>
+  );
   return (
-    <div className="rounded-2xl border bg-card p-5 space-y-3 max-w-2xl">
-      <h3 className="font-semibold">Site settings</h3>
-      <label className="block text-sm">Telegram channel URL
-        <input className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.telegram_url ?? ""} onChange={(e) => setF({ ...f, telegram_url: e.target.value })} />
-      </label>
-      <label className="block text-sm">Hero title
-        <input className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.hero_title ?? ""} onChange={(e) => setF({ ...f, hero_title: e.target.value })} />
-      </label>
-      <label className="block text-sm">Hero subtitle
-        <textarea className="w-full mt-1 px-3 py-2 rounded-lg border" value={f.hero_subtitle ?? ""} onChange={(e) => setF({ ...f, hero_subtitle: e.target.value })} />
-      </label>
+    <div className="rounded-2xl border bg-card p-5 space-y-4 max-w-3xl">
+      <h3 className="font-display text-lg font-semibold">Site settings — edit every section of the homepage</h3>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {text("site_name", "Site name")}
+        {text("tagline", "Tagline")}
+        {text("telegram_url", "Telegram channel URL")}
+        {text("footer_text", "Footer text")}
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!f.intro_animation_enabled} onChange={(e) => setF({ ...f, intro_animation_enabled: e.target.checked })} /> Show intro animation on first visit</label>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!f.telegram_popup_enabled} onChange={(e) => setF({ ...f, telegram_popup_enabled: e.target.checked })} /> Show Telegram popup every visit</label>
+      </div>
+      <h4 className="font-semibold pt-2">Hero</h4>
+      {text("hero_title", "Hero title")}
+      {text("hero_subtitle", "Hero subtitle", true)}
+      <h4 className="font-semibold pt-2">Portals section</h4>
+      <div className="grid sm:grid-cols-2 gap-3">{text("portals_title", "Title")}{text("portals_subtitle", "Subtitle")}</div>
+      <h4 className="font-semibold pt-2">Featured Institutions section</h4>
+      <div className="grid sm:grid-cols-2 gap-3">{text("institutes_title", "Title")}{text("institutes_subtitle", "Subtitle")}</div>
+      <h4 className="font-semibold pt-2">Why Choose Us section</h4>
+      <div className="grid sm:grid-cols-2 gap-3">{text("why_title", "Title")}{text("why_subtitle", "Subtitle")}</div>
+      <h4 className="font-semibold pt-2">Who is this for section</h4>
+      <div className="grid sm:grid-cols-2 gap-3">{text("who_title", "Title")}{text("who_subtitle", "Subtitle")}</div>
+      <h4 className="font-semibold pt-2">Ready to Start CTA</h4>
+      <div className="grid sm:grid-cols-2 gap-3">{text("cta_title", "Title")}{text("cta_button_text", "Button text")}{text("cta_subtitle", "Subtitle")}{text("cta_button_url", "Button URL")}</div>
       <label className="block text-sm">Founders (JSON array of {`{name, role, bio, avatar}`})
-        <textarea rows={8} className="w-full mt-1 px-3 py-2 rounded-lg border font-mono text-xs" value={f.founders}
+        <textarea rows={6} className="w-full mt-1 px-3 py-2 rounded-lg border font-mono text-xs" value={f.founders}
           onChange={(e) => setF({ ...f, founders: e.target.value })} />
       </label>
-      <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Save</Button>
+      <Button onClick={save}><Save className="h-4 w-4 mr-1" /> Save all settings</Button>
     </div>
   );
 }
