@@ -9,6 +9,7 @@ type Portal = {
   subtitle: string | null;
   description: string | null;
   emoji: string | null;
+  logo_url?: string | null;
   link_url: string | null;
   whatsapp_url: string | null;
   embed_in_app: boolean;
