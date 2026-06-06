@@ -75,6 +75,7 @@ export function SimpleCMS({ table, title, fields, defaultRow }: {
   };
 
   const renderInput = (f: Field, value: any, onChange: (v: any) => void) => {
+    if (f.type === "logo") return <GalleryUpload bucket={f.bucket ?? "coaching-logos"} value={value} onChange={onChange} label={f.label} />;
     if (f.type === "textarea") return <textarea className="w-full px-3 py-2 rounded-lg border bg-background text-sm" value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={f.label} />;
     if (f.type === "checkbox") return <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} /> {f.label}</label>;
     if (f.type === "number") return <input type="number" className="px-3 py-2 rounded-lg border bg-background text-sm w-24" value={value ?? 0} onChange={(e) => onChange(Number(e.target.value))} placeholder={f.label} />;
