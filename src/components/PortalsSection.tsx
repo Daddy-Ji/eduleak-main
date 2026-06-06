@@ -42,7 +42,13 @@ export function PortalsSection({ portals, title, subtitle }: { portals: Portal[]
               >
                 <div className="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-primary/10 group-hover:bg-primary/20 transition" />
                 <div className="relative">
-                  <div className="text-4xl mb-3">{p.emoji ?? "📚"}</div>
+                  {p.logo_url ? (
+                    p.logo_url.startsWith("http")
+                      ? <img src={p.logo_url} alt={p.title} className="h-14 w-14 mb-3 object-contain rounded-xl bg-card border p-1.5" />
+                      : <SignedImage bucket="coaching-logos" path={p.logo_url} alt={p.title} className="h-14 w-14 mb-3 object-contain rounded-xl bg-card border p-1.5" />
+                  ) : (
+                    <div className="text-4xl mb-3">{p.emoji ?? "📚"}</div>
+                  )}
                   <h3 className="font-display text-xl font-semibold">{p.title}</h3>
                   {p.subtitle && <p className="text-sm font-medium text-primary mt-1">{p.subtitle}</p>}
                   {p.description && <p className="text-sm text-muted-foreground mt-2">{p.description}</p>}
