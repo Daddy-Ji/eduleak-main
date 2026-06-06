@@ -523,6 +523,53 @@ function SettingsAdmin() {
   );
 }
 
+// Founders editor with per-founder avatar upload from gallery
+function FoundersEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  let parsed: any[] = [];
+  try { parsed = JSON.parse(value || "[]"); if (!Array.isArray(parsed)) parsed = []; } catch { parsed = []; }
+  const update = (next: any[]) => onChange(JSON.stringify(next, null, 2));
+  const setAt = (i: number, patch: any) => update(parsed.map((p, idx) => idx === i ? { ...p, ...patch } : p));
+  const upload = async (i: number, file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Pick an image");
+    try { const path = await uploadFile("coaching-logos", file); setAt(i, { avatar: path }); toast.success("Photo uploaded"); }
+    catch (e: any) { toast.error(e.message); }
+  };
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="font-semibold">Team behind EduLeak</h4>
+        <Button size="sm" variant="outline" onClick={() => update([...parsed, { name: "", role: "", bio: "", avatar: "" }])}>
+          <Plus className="h-3.5 w-3.5 mr-1" /> Add member
+        </Button>
+      </div>
+      {parsed.map((m, i) => (
+        <div key={i} className="rounded-xl border bg-card p-4 grid sm:grid-cols-[120px_1fr_auto] gap-3 items-start">
+          <label className="group relative flex h-28 w-28 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-border bg-muted/40 hover:border-primary/60 overflow-hidden transition">
+            <input type="file" accept="image/*" className="sr-only" onChange={(e) => upload(i, e.target.files?.[0])} />
+            {m.avatar ? (
+              m.avatar.startsWith("http")
+                ? <img src={m.avatar} alt={m.name} className="h-full w-full object-cover" />
+                : <SignedImage bucket="coaching-logos" path={m.avatar} alt={m.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex flex-col items-center gap-1 text-muted-foreground group-hover:text-primary text-xs">
+                <ImagePlus className="h-6 w-6" /> Pick photo
+              </div>
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-background/80 opacity-0 group-hover:opacity-100 backdrop-blur-sm transition text-xs font-medium">Change</div>
+          </label>
+          <div className="space-y-2">
+            <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Name" value={m.name ?? ""} onChange={(e) => setAt(i, { name: e.target.value })} />
+            <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Role" value={m.role ?? ""} onChange={(e) => setAt(i, { role: e.target.value })} />
+            <textarea className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Bio" value={m.bio ?? ""} onChange={(e) => setAt(i, { bio: e.target.value })} />
+          </div>
+          <Button size="sm" variant="ghost" onClick={() => update(parsed.filter((_, idx) => idx !== i))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        </div>
+      ))}
+      {parsed.length === 0 && <div className="text-center text-sm text-muted-foreground p-6 border-dashed border rounded-xl">No team members yet.</div>}
+    </div>
+  );
+
 // ============ Stats ============
 function StatsAdmin() {
   const [s, setS] = useState({ courses: 0, published: 0, lessons: 0, files: 0, coachings: 0, exams: 0, users: 0, recent: [] as any[] });
