@@ -1,15 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, BookOpen, Users, Award, Info, LogOut, LogIn } from "lucide-react";
+import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, Layers, Users, Award, Info, LogOut, LogIn } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
+import { SignedImage } from "@/components/SignedImage";
 import { motion, AnimatePresence } from "framer-motion";
 
-const nav = [
+type NavItem = { to: string; label: string; icon: any; hash?: boolean };
+const nav: NavItem[] = [
   { to: "/", label: "Home", icon: Home },
-  { to: "/courses", label: "Courses", icon: BookOpen },
+  { to: "/#portals", label: "Portals", icon: Layers, hash: true },
   { to: "/coachings", label: "Coachings", icon: Users },
   { to: "/exams", label: "Exams", icon: Award },
   { to: "/about", label: "About", icon: Info },
