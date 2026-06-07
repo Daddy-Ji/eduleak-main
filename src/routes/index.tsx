@@ -51,9 +51,9 @@ function HomePage() {
                 {settings?.hero_subtitle ?? "Curated lessons from India's best coachings, organised by exam."}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/courses" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
-                  Browse courses <ArrowRight className="h-4 w-4" />
-                </Link>
+                <a href="#portals" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition">
+                  Browse portals <ArrowRight className="h-4 w-4" />
+                </a>
                 <Link to="/about" className="inline-flex items-center px-6 py-3 rounded-xl border bg-card hover:bg-muted font-medium transition">
                   Meet the team
                 </Link>
