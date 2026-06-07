@@ -494,6 +494,11 @@ function SettingsAdmin() {
   return (
     <div className="rounded-2xl border bg-card p-5 space-y-4 max-w-3xl">
       <h3 className="font-display text-lg font-semibold">Site settings — edit every section of the homepage</h3>
+      <div>
+        <div className="text-sm font-medium mb-2">Site logo (shown in header)</div>
+        <LogoUploader bucket="coaching-logos" value={f.site_logo_url}
+          onChange={(p) => setF({ ...f, site_logo_url: p })} />
+      </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {text("site_name", "Site name")}
         {text("tagline", "Tagline")}
