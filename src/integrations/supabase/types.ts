@@ -328,6 +328,7 @@ export type Database = {
       }
       portals: {
         Row: {
+          category: string | null
           created_at: string
           description: string | null
           display_order: number
@@ -342,6 +343,7 @@ export type Database = {
           whatsapp_url: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
@@ -356,6 +358,7 @@ export type Database = {
           whatsapp_url?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
@@ -411,6 +414,7 @@ export type Database = {
           intro_animation_enabled: boolean | null
           portals_subtitle: string | null
           portals_title: string | null
+          site_logo_url: string | null
           site_name: string | null
           tagline: string | null
           telegram_popup_enabled: boolean | null
@@ -437,6 +441,7 @@ export type Database = {
           intro_animation_enabled?: boolean | null
           portals_subtitle?: string | null
           portals_title?: string | null
+          site_logo_url?: string | null
           site_name?: string | null
           tagline?: string | null
           telegram_popup_enabled?: boolean | null
@@ -463,6 +468,7 @@ export type Database = {
           intro_animation_enabled?: boolean | null
           portals_subtitle?: string | null
           portals_title?: string | null
+          site_logo_url?: string | null
           site_name?: string | null
           tagline?: string | null
           telegram_popup_enabled?: boolean | null

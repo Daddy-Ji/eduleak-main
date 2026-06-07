@@ -1,15 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, BookOpen, Users, Award, Info, LogOut, LogIn } from "lucide-react";
+import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, Layers, Users, Award, Info, LogOut, LogIn } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
+import { SignedImage } from "@/components/SignedImage";
 import { motion, AnimatePresence } from "framer-motion";
 
-const nav = [
+type NavItem = { to: string; label: string; icon: any; hash?: boolean };
+const nav: NavItem[] = [
   { to: "/", label: "Home", icon: Home },
-  { to: "/courses", label: "Courses", icon: BookOpen },
+  { to: "/#portals", label: "Portals", icon: Layers, hash: true },
   { to: "/coachings", label: "Coachings", icon: Users },
   { to: "/exams", label: "Exams", icon: Award },
   { to: "/about", label: "About", icon: Info },
@@ -19,6 +21,7 @@ export function Header() {
   const { user, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [site, setSite] = useState<{ site_name?: string | null; site_logo_url?: string | null }>({});
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => { setOpen(false); }, [path]);
@@ -26,6 +29,8 @@ export function Header() {
     const saved = localStorage.getItem("theme") === "dark";
     setDark(saved);
     document.documentElement.classList.toggle("dark", saved);
+    supabase.from("site_settings").select("site_name, site_logo_url").eq("id", "singleton").maybeSingle()
+      .then(({ data }) => { if (data) setSite(data); });
   }, []);
   const toggleTheme = () => {
     const next = !dark;
@@ -34,28 +39,39 @@ export function Header() {
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
+  const siteName = site.site_name ?? "EduLeak";
+  const logo = site.site_logo_url;
+
   return (
     <>
       <header className="sticky top-0 z-40 glass border-b">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center h-16 gap-4">
           <Link to="/" className="flex items-center gap-2 font-display font-bold text-lg">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <GraduationCap className="h-5 w-5" />
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground overflow-hidden">
+              {logo ? (
+                logo.startsWith("http")
+                  ? <img src={logo} alt={siteName} className="h-full w-full object-cover" />
+                  : <SignedImage bucket="coaching-logos" path={logo} alt={siteName} className="h-full w-full object-cover" />
+              ) : <GraduationCap className="h-5 w-5" />}
             </span>
-            <span>EduLeak</span>
+            <span>{siteName}</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 ml-6">
             {nav.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                activeProps={{ className: "px-3 py-2 rounded-md text-sm font-medium text-primary bg-secondary" }}
-                activeOptions={{ exact: n.to === "/" }}
-              >
-                {n.label}
-              </Link>
+              n.hash ? (
+                <a key={n.to} href={n.to} className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">{n.label}</a>
+              ) : (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  activeProps={{ className: "px-3 py-2 rounded-md text-sm font-medium text-primary bg-secondary" }}
+                  activeOptions={{ exact: n.to === "/" }}
+                >
+                  {n.label}
+                </Link>
+              )
             ))}
           </nav>
 
@@ -98,10 +114,17 @@ export function Header() {
               </div>
               <nav className="flex-1 overflow-auto p-3 space-y-1">
                 {nav.map((n) => (
-                  <Link key={n.to} to={n.to} onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
-                    <n.icon className="h-4 w-4 text-primary" /> {n.label}
-                  </Link>
+                  n.hash ? (
+                    <a key={n.to} href={n.to} onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
+                      <n.icon className="h-4 w-4 text-primary" /> {n.label}
+                    </a>
+                  ) : (
+                    <Link key={n.to} to={n.to} onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
+                      <n.icon className="h-4 w-4 text-primary" /> {n.label}
+                    </Link>
+                  )
                 ))}
                 {isAdmin && (
                   <Link to="/admin" onClick={() => setOpen(false)}

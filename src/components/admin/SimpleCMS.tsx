@@ -121,9 +121,11 @@ export function SimpleCMS({ table, title, fields, defaultRow }: {
 }
 
 export function PortalsAdmin() {
-  return <SimpleCMS table="portals" title="portal" defaultRow={{ title: "", subtitle: "", description: "", emoji: "📚", logo_url: "", link_url: "", whatsapp_url: "", embed_in_app: false, display_order: 0, is_active: true }} fields={[
+  return <SimpleCMS table="portals" title="portal" defaultRow={{ title: "", subtitle: "", description: "", emoji: "📚", logo_url: "", link_url: "", whatsapp_url: "", category: "", embed_in_app: false, display_order: 0, is_active: true }} fields={[
     { key: "title", label: "Title" }, { key: "subtitle", label: "Subtitle" },
-    { key: "emoji", label: "Emoji (fallback)" }, { key: "display_order", label: "Order", type: "number" },
+    { key: "category", label: "Category (e.g. JEE, NEET, UPSC — any text)" },
+    { key: "emoji", label: "Emoji (fallback)" },
+    { key: "display_order", label: "Order (lower = shown first)", type: "number" },
     { key: "logo_url", label: "Logo", type: "logo", bucket: "coaching-logos" },
     { key: "description", label: "Description", type: "textarea" },
     { key: "link_url", label: "Link URL (https://...)" }, { key: "whatsapp_url", label: "WhatsApp URL" },
