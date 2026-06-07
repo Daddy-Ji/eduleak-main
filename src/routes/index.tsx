@@ -106,22 +106,55 @@ function HomePage() {
         </section>
       )}
 
-      {latest.length > 0 && (
-        <section className="py-12">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <h2 className="font-display text-3xl sm:text-4xl font-semibold">Recently added</h2>
-                <p className="text-muted-foreground mt-2">Fresh lessons hand-picked from across the web.</p>
+      {(() => {
+        const recentPortals = [...portals]
+          .sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
+          .slice(0, 4)
+          .map((p: any) => ({ kind: "portal", ...p }));
+        const recentCourses = latest.map((c: any) => ({ kind: "course", ...c }));
+        const mixed = [...recentCourses, ...recentPortals]
+          .sort((a: any, b: any) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
+          .slice(0, 9);
+        if (mixed.length === 0) return null;
+        return (
+          <section className="py-12">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <h2 className="font-display text-3xl sm:text-4xl font-semibold">Recently added</h2>
+                  <p className="text-muted-foreground mt-2">Fresh lessons & portals hand-picked from across the web.</p>
+                </div>
+                <a href="#portals" className="text-sm text-primary hover:underline">All portals →</a>
               </div>
-              <Link to="/courses" className="text-sm text-primary hover:underline">All courses →</Link>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {mixed.map((item: any, i: number) =>
+                  item.kind === "course"
+                    ? <CourseCard key={`c-${item.id}`} course={item} index={i} />
+                    : (
+                      <motion.a
+                        key={`p-${item.id}`}
+                        href={item.embed_in_app && item.link_url ? `/embed/${item.id}` : (item.link_url ?? "#portals")}
+                        target={item.embed_in_app ? "_self" : "_blank"}
+                        rel="noreferrer"
+                        initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                        transition={{ delay: i * 0.05 }}
+                        className="block rounded-2xl border bg-card p-5 hover:shadow-soft hover:-translate-y-1 transition-all"
+                      >
+                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider font-semibold text-primary mb-2">
+                          <span className="bg-primary/10 px-2 py-0.5 rounded-full">Portal</span>
+                          {item.category && <span className="text-muted-foreground">· {item.category}</span>}
+                        </div>
+                        <div className="text-3xl mb-2">{item.emoji ?? "📚"}</div>
+                        <h3 className="font-display text-lg font-semibold">{item.title}</h3>
+                        {item.subtitle && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{item.subtitle}</p>}
+                      </motion.a>
+                    )
+                )}
+              </div>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {latest.map((c: any, i: number) => <CourseCard key={c.id} course={c} index={i} />)}
-            </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
       <ReadyToStart
         title={settings?.cta_title ?? "Ready to Start?"}
