@@ -114,10 +114,17 @@ export function Header() {
               </div>
               <nav className="flex-1 overflow-auto p-3 space-y-1">
                 {nav.map((n) => (
-                  <Link key={n.to} to={n.to} onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
-                    <n.icon className="h-4 w-4 text-primary" /> {n.label}
-                  </Link>
+                  n.hash ? (
+                    <a key={n.to} href={n.to} onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
+                      <n.icon className="h-4 w-4 text-primary" /> {n.label}
+                    </a>
+                  ) : (
+                    <Link key={n.to} to={n.to} onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-sm font-medium">
+                      <n.icon className="h-4 w-4 text-primary" /> {n.label}
+                    </Link>
+                  )
                 ))}
                 {isAdmin && (
                   <Link to="/admin" onClick={() => setOpen(false)}
