@@ -15,11 +15,11 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     sb.from("coachings").select("*").order("display_order"),
     sb.from("exams").select("*").order("display_order"),
     sb.from("courses")
-      .select("id, slug, title, description, cover_url, course_type, coaching:coachings(name,slug,logo_url), exam:exams(name,slug)")
+      .select("id, slug, title, description, cover_url, course_type, coaching:coachings(name,slug,logo_url), exam:exams(name,slug), created_at")
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(8),
-    sb.from("portals").select("*").eq("is_active", true).order("display_order"),
+    sb.from("portals").select("*").eq("is_active", true).order("display_order").order("created_at", { ascending: false }),
     sb.from("featured_institutes").select("*").order("display_order"),
     sb.from("why_us").select("*").order("display_order"),
     sb.from("audience").select("*").order("display_order"),
