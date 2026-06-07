@@ -469,7 +469,7 @@ function CourseEditor({ course, coachings, exams, onDone }: any) {
 
 // ============ Settings ============
 function SettingsAdmin() {
-  const [f, setF] = useState<any>({ telegram_url: "", hero_title: "", hero_subtitle: "", site_name: "EduLeak", tagline: "", portals_title: "", portals_subtitle: "", institutes_title: "", institutes_subtitle: "", why_title: "", why_subtitle: "", who_title: "", who_subtitle: "", cta_title: "", cta_subtitle: "", cta_button_text: "", cta_button_url: "", footer_text: "", intro_animation_enabled: true, telegram_popup_enabled: true, founders: "[]" });
+  const [f, setF] = useState<any>({ telegram_url: "", hero_title: "", hero_subtitle: "", site_name: "EduLeak", site_logo_url: "", tagline: "", portals_title: "", portals_subtitle: "", institutes_title: "", institutes_subtitle: "", why_title: "", why_subtitle: "", who_title: "", who_subtitle: "", cta_title: "", cta_subtitle: "", cta_button_text: "", cta_button_url: "", footer_text: "", intro_animation_enabled: true, telegram_popup_enabled: true, founders: "[]" });
   useEffect(() => {
     supabase.from("site_settings").select("*").eq("id", "singleton").maybeSingle().then(({ data }) => {
       if (data) setF({ ...data, founders: JSON.stringify(data.founders ?? [], null, 2) });
