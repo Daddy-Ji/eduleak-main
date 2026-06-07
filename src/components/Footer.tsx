@@ -26,7 +26,7 @@ export function Footer({ telegramUrl }: { telegramUrl?: string | null }) {
         <div>
           <h4 className="font-semibold mb-3">Explore</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/courses" className="hover:text-foreground">Courses</Link></li>
+            <li><a href="/#portals" className="hover:text-foreground">Portals</a></li>
             <li><Link to="/coachings" className="hover:text-foreground">Coachings</Link></li>
             <li><Link to="/exams" className="hover:text-foreground">Exams</Link></li>
           </ul>
