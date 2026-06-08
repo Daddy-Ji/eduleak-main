@@ -784,7 +784,7 @@ function ImportAdmin() {
             {exams.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
           </select>
           <textarea className="sm:col-span-2 px-3 py-2.5 rounded-lg border bg-background font-mono text-xs min-h-[160px]"
-            placeholder={"One URL per line, or  Title | URL\nhttps://www.youtube.com/watch?v=...\nKinematics 1D | https://youtu.be/..."}
+            placeholder={"One URL per line, or  Title | URL  (YouTube OR any direct video link)\nhttps://www.youtube.com/watch?v=...\nKinematics 1D | https://example.com/video.mp4"}
             value={bulk.urls} onChange={(e) => setBulk({ ...bulk, urls: e.target.value })} />
         </div>
         <Button className="mt-4" onClick={importBulk} disabled={busy} size="lg">
