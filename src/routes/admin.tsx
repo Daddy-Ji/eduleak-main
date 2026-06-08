@@ -346,9 +346,9 @@ function CourseEditor({ course, coachings, exams, onDone }: any) {
   };
 
   const addLesson = async () => {
-    const yid = extractYouTubeId(newLesson.youtube_url);
-    if (!yid) return toast.error("Invalid YouTube URL");
     if (!newLesson.title) return toast.error("Lesson title required");
+    if (!newLesson.youtube_url) return toast.error("Video URL required");
+    const yid = extractYouTubeId(newLesson.youtube_url);
     const { error } = await supabase.from("lessons").insert({
       course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid,
       display_order: lessons.length,
