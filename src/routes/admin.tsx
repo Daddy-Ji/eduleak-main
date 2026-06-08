@@ -666,13 +666,11 @@ function ImportAdmin() {
     const lines = bulk.urls.split("\n").map((l) => l.trim()).filter(Boolean);
     if (lines.length === 0) return toast.error("Paste at least one YouTube URL");
     const parsed = lines.map((l) => {
-      // optional "Title | URL" format
       const [maybeTitle, maybeUrl] = l.includes("|") ? l.split("|").map((x) => x.trim()) : [null, l];
       const url = maybeUrl ?? l;
       const id = extractYouTubeId(url);
-      return id ? { title: maybeTitle || `Lesson`, url, id } : null;
+      return { title: maybeTitle || `Lesson`, url, id };
     });
-    if (parsed.some((p) => !p)) return toast.error("One or more URLs are invalid YouTube links");
 
     setBusy(true);
     try {
@@ -683,8 +681,8 @@ function ImportAdmin() {
       }).select().single();
       if (error) throw error;
       const rows = parsed.map((p, i) => ({
-        course_id: course.id, title: p!.title === "Lesson" ? `Lesson ${i + 1}` : p!.title,
-        youtube_url: p!.url, youtube_id: p!.id, display_order: i,
+        course_id: course.id, title: p.title === "Lesson" ? `Lesson ${i + 1}` : p.title,
+        youtube_url: p.url, youtube_id: p.id ?? "", display_order: i,
       }));
       const { error: e2 } = await supabase.from("lessons").insert(rows);
       if (e2) throw e2;
