@@ -544,7 +544,7 @@ function FoundersEditor({ value, onChange }: { value: string; onChange: (v: stri
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="font-semibold">Team behind EduLeak</h4>
-        <Button size="sm" variant="outline" onClick={() => update([...parsed, { name: "", role: "", bio: "", avatar: "" }])}>
+        <Button size="sm" variant="outline" onClick={() => update([...parsed, { name: "", role: "", bio: "", avatar: "", telegram: "" }])}>
           <Plus className="h-3.5 w-3.5 mr-1" /> Add member
         </Button>
       </div>
@@ -566,6 +566,7 @@ function FoundersEditor({ value, onChange }: { value: string; onChange: (v: stri
           <div className="space-y-2">
             <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Name" value={m.name ?? ""} onChange={(e) => setAt(i, { name: e.target.value })} />
             <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Role" value={m.role ?? ""} onChange={(e) => setAt(i, { role: e.target.value })} />
+            <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Telegram username (without @)" value={m.telegram ?? ""} onChange={(e) => setAt(i, { telegram: e.target.value.replace(/^@/, "").trim() })} />
             <textarea className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Bio" value={m.bio ?? ""} onChange={(e) => setAt(i, { bio: e.target.value })} />
           </div>
           <Button size="sm" variant="ghost" onClick={() => update(parsed.filter((_, idx) => idx !== i))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
