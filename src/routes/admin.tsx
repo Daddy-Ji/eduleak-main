@@ -706,7 +706,7 @@ function ImportAdmin() {
     external_url: null,
     lessons: [
       { title: "Units & Measurements", youtube_url: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
-      { title: "Kinematics 1D", youtube_url: "https://youtu.be/YYYYYYYYYYY" },
+      { title: "Kinematics 1D", video_url: "https://example.com/lesson.mp4" },
     ],
   }, null, 2);
 
