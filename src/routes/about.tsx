@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { getSiteSettings } from "@/lib/courses.functions";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Send } from "lucide-react";
 import { SignedImage } from "@/components/SignedImage";
 
 export const Route = createFileRoute("/about")({
