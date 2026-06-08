@@ -731,13 +731,14 @@ function ImportAdmin() {
         if (error) throw error;
         total++;
         const lessons = (c.lessons ?? []).map((l: any, i: number) => {
-          const id = extractYouTubeId(l.youtube_url || "");
-          if (!id) throw new Error(`Invalid YouTube URL in lesson "${l.title}"`);
+          const url = l.youtube_url || l.video_url || l.url || "";
+          if (!url) throw new Error(`Missing video URL in lesson "${l.title}"`);
+          const id = extractYouTubeId(url);
           return {
             course_id: course.id,
             title: l.title || `Lesson ${i + 1}`,
-            youtube_url: l.youtube_url,
-            youtube_id: id,
+            youtube_url: url,
+            youtube_id: id ?? "",
             description: l.description ?? null,
             display_order: i,
           };
