@@ -350,7 +350,7 @@ function CourseEditor({ course, coachings, exams, onDone }: any) {
     if (!newLesson.youtube_url) return toast.error("Video URL required");
     const yid = extractYouTubeId(newLesson.youtube_url);
     const { error } = await supabase.from("lessons").insert({
-      course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid,
+      course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid ?? "",
       display_order: lessons.length,
     });
     if (error) return toast.error(error.message);
