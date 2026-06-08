@@ -20,8 +20,8 @@ function EmbedPage() {
 
   useEffect(() => {
     if (!portal?.link_url) return;
-    // Fallback: if iframe doesn't load in 6s, assume blocked
-    const t = setTimeout(() => { if (!ready) setFailed(true); }, 6000);
+    // Fallback: if iframe doesn't load in 10s, assume blocked
+    const t = setTimeout(() => { if (!ready) setFailed(true); }, 10000);
     return () => clearTimeout(t);
   }, [portal, ready]);
 
