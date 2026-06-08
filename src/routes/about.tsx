@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { getSiteSettings } from "@/lib/courses.functions";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Send } from "lucide-react";
 import { SignedImage } from "@/components/SignedImage";
 
 export const Route = createFileRoute("/about")({
@@ -57,6 +57,16 @@ function AboutPage() {
               </div>
             </div>
             <p className="mt-4 text-muted-foreground text-sm leading-relaxed">{f.bio}</p>
+            {f.telegram && (
+              <a
+                href={`https://t.me/${f.telegram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition"
+              >
+                <Send className="h-3.5 w-3.5" /> Message on Telegram
+              </a>
+            )}
           </motion.div>
         ))}
       </div>

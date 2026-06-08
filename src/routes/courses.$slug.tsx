@@ -73,13 +73,26 @@ function CourseDetail() {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
                 className="aspect-video rounded-2xl overflow-hidden border bg-black shadow-soft"
               >
-                <iframe
-                  src={youtubeEmbed(active.youtube_id)}
-                  title={active.title}
-                  className="w-full h-full"
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                {active.youtube_id ? (
+                  <iframe
+                    src={youtubeEmbed(active.youtube_id)}
+                    title={active.title}
+                    className="w-full h-full"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(active.youtube_url ?? "") ? (
+                  <video src={active.youtube_url} controls className="w-full h-full" />
+                ) : (
+                  <iframe
+                    src={active.youtube_url}
+                    title={active.title}
+                    className="w-full h-full"
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    referrerPolicy="no-referrer"
+                  />
+                )}
               </motion.div>
             )}
 

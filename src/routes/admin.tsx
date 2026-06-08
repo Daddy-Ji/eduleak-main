@@ -346,11 +346,11 @@ function CourseEditor({ course, coachings, exams, onDone }: any) {
   };
 
   const addLesson = async () => {
-    const yid = extractYouTubeId(newLesson.youtube_url);
-    if (!yid) return toast.error("Invalid YouTube URL");
     if (!newLesson.title) return toast.error("Lesson title required");
+    if (!newLesson.youtube_url) return toast.error("Video URL required");
+    const yid = extractYouTubeId(newLesson.youtube_url);
     const { error } = await supabase.from("lessons").insert({
-      course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid,
+      course_id: id, title: newLesson.title, youtube_url: newLesson.youtube_url, youtube_id: yid ?? "",
       display_order: lessons.length,
     });
     if (error) return toast.error(error.message);
@@ -544,7 +544,7 @@ function FoundersEditor({ value, onChange }: { value: string; onChange: (v: stri
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="font-semibold">Team behind EduLeak</h4>
-        <Button size="sm" variant="outline" onClick={() => update([...parsed, { name: "", role: "", bio: "", avatar: "" }])}>
+        <Button size="sm" variant="outline" onClick={() => update([...parsed, { name: "", role: "", bio: "", avatar: "", telegram: "" }])}>
           <Plus className="h-3.5 w-3.5 mr-1" /> Add member
         </Button>
       </div>
@@ -566,6 +566,7 @@ function FoundersEditor({ value, onChange }: { value: string; onChange: (v: stri
           <div className="space-y-2">
             <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Name" value={m.name ?? ""} onChange={(e) => setAt(i, { name: e.target.value })} />
             <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Role" value={m.role ?? ""} onChange={(e) => setAt(i, { role: e.target.value })} />
+            <input className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Telegram username (without @)" value={m.telegram ?? ""} onChange={(e) => setAt(i, { telegram: e.target.value.replace(/^@/, "").trim() })} />
             <textarea className="w-full px-3 py-2 rounded-lg border bg-background text-sm" placeholder="Bio" value={m.bio ?? ""} onChange={(e) => setAt(i, { bio: e.target.value })} />
           </div>
           <Button size="sm" variant="ghost" onClick={() => update(parsed.filter((_, idx) => idx !== i))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -665,13 +666,11 @@ function ImportAdmin() {
     const lines = bulk.urls.split("\n").map((l) => l.trim()).filter(Boolean);
     if (lines.length === 0) return toast.error("Paste at least one YouTube URL");
     const parsed = lines.map((l) => {
-      // optional "Title | URL" format
       const [maybeTitle, maybeUrl] = l.includes("|") ? l.split("|").map((x) => x.trim()) : [null, l];
       const url = maybeUrl ?? l;
       const id = extractYouTubeId(url);
-      return id ? { title: maybeTitle || `Lesson`, url, id } : null;
+      return { title: maybeTitle || `Lesson`, url, id };
     });
-    if (parsed.some((p) => !p)) return toast.error("One or more URLs are invalid YouTube links");
 
     setBusy(true);
     try {
@@ -682,8 +681,8 @@ function ImportAdmin() {
       }).select().single();
       if (error) throw error;
       const rows = parsed.map((p, i) => ({
-        course_id: course.id, title: p!.title === "Lesson" ? `Lesson ${i + 1}` : p!.title,
-        youtube_url: p!.url, youtube_id: p!.id, display_order: i,
+        course_id: course.id, title: p.title === "Lesson" ? `Lesson ${i + 1}` : p.title,
+        youtube_url: p.url, youtube_id: p.id ?? "", display_order: i,
       }));
       const { error: e2 } = await supabase.from("lessons").insert(rows);
       if (e2) throw e2;
@@ -707,7 +706,7 @@ function ImportAdmin() {
     external_url: null,
     lessons: [
       { title: "Units & Measurements", youtube_url: "https://www.youtube.com/watch?v=XXXXXXXXXXX" },
-      { title: "Kinematics 1D", youtube_url: "https://youtu.be/YYYYYYYYYYY" },
+      { title: "Kinematics 1D", video_url: "https://example.com/lesson.mp4" },
     ],
   }, null, 2);
 
@@ -732,13 +731,14 @@ function ImportAdmin() {
         if (error) throw error;
         total++;
         const lessons = (c.lessons ?? []).map((l: any, i: number) => {
-          const id = extractYouTubeId(l.youtube_url || "");
-          if (!id) throw new Error(`Invalid YouTube URL in lesson "${l.title}"`);
+          const url = l.youtube_url || l.video_url || l.url || "";
+          if (!url) throw new Error(`Missing video URL in lesson "${l.title}"`);
+          const id = extractYouTubeId(url);
           return {
             course_id: course.id,
             title: l.title || `Lesson ${i + 1}`,
-            youtube_url: l.youtube_url,
-            youtube_id: id,
+            youtube_url: url,
+            youtube_id: id ?? "",
             description: l.description ?? null,
             display_order: i,
           };
@@ -784,7 +784,7 @@ function ImportAdmin() {
             {exams.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
           </select>
           <textarea className="sm:col-span-2 px-3 py-2.5 rounded-lg border bg-background font-mono text-xs min-h-[160px]"
-            placeholder={"One URL per line, or  Title | URL\nhttps://www.youtube.com/watch?v=...\nKinematics 1D | https://youtu.be/..."}
+            placeholder={"One URL per line, or  Title | URL  (YouTube OR any direct video link)\nhttps://www.youtube.com/watch?v=...\nKinematics 1D | https://example.com/video.mp4"}
             value={bulk.urls} onChange={(e) => setBulk({ ...bulk, urls: e.target.value })} />
         </div>
         <Button className="mt-4" onClick={importBulk} disabled={busy} size="lg">
