@@ -8,6 +8,7 @@ import { PortalsSection } from "@/components/PortalsSection";
 import { InstitutesMarquee } from "@/components/InstitutesMarquee";
 import { WhyChooseUs, AudienceSection, ReadyToStart } from "@/components/WhyChooseUs";
 import { ArrowRight, Sparkles, BookOpen, Users, Award } from "lucide-react";
+import heroChar from "@/assets/hero-character.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
