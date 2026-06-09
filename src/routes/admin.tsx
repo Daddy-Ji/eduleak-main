@@ -98,12 +98,12 @@ function AdminPage() {
         </Button>
       </div>
       <div className="flex gap-1 border-b mb-6 overflow-auto">
-        {(["stats", "courses", "coachings", "exams", "portals", "institutes", "why", "audience", "notifications", "import", "settings"] as Tab[]).map((t) => (
+        {(["stats", "courses", "coachings", "exams", "portals", "test_series", "institutes", "why", "audience", "notifications", "import", "settings"] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize whitespace-nowrap transition ${
               tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
             }`}>
-            {t}
+            {t === "test_series" ? "Test Series" : t}
           </button>
         ))}
       </div>
@@ -112,6 +112,7 @@ function AdminPage() {
       {tab === "coachings" && <CoachingsAdmin />}
       {tab === "exams" && <ExamsAdmin />}
       {tab === "portals" && <PortalsAdmin />}
+      {tab === "test_series" && <TestSeriesAdmin />}
       {tab === "institutes" && <InstitutesAdmin />}
       {tab === "why" && <WhyAdmin />}
       {tab === "audience" && <AudienceAdmin />}
