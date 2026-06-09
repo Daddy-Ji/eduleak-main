@@ -57,7 +57,7 @@ export function HeroIllustration() {
           alt="A young student reading, surrounded by books"
           width={1024}
           height={1024}
-          fetchpriority="high"
+          fetchPriority="high"
           className="w-full h-full object-contain select-none drop-shadow-[0_25px_40px_rgba(180,90,40,0.25)]"
           draggable={false}
           animate={{
