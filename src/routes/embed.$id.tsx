@@ -15,7 +15,12 @@ function EmbedPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    supabase.from("portals").select("*").eq("id", id).maybeSingle().then(({ data }) => setPortal(data));
+    (async () => {
+      const { data } = await supabase.from("portals").select("*").eq("id", id).maybeSingle();
+      if (data) { setPortal(data); return; }
+      const ts = await (supabase as any).from("test_series").select("*").eq("id", id).maybeSingle();
+      if (ts.data) setPortal(ts.data);
+    })();
   }, [id]);
 
   useEffect(() => {
