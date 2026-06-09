@@ -8,7 +8,7 @@ import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
 import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap, BookOpen, Video, FileText, Layers, TrendingUp, ListVideo, FileJson, Wand2 } from "lucide-react";
-import { PortalsAdmin, InstitutesAdmin, WhyAdmin, AudienceAdmin, NotificationsAdmin } from "@/components/admin/SimpleCMS";
+import { PortalsAdmin, TestSeriesAdmin, InstitutesAdmin, WhyAdmin, AudienceAdmin, NotificationsAdmin } from "@/components/admin/SimpleCMS";
 
 // Styled logo upload button — drag/drop + click, with preview
 function LogoUploader({
