@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroChar from "@/assets/hero-character.png";
+import heroChar from "@/assets/hero-character.webp";
 
 // Staged-entry hero illustration with continuous micro-gestures:
 //  - Gentle float on Y
@@ -57,6 +57,7 @@ export function HeroIllustration() {
           alt="A young student reading, surrounded by books"
           width={1024}
           height={1024}
+          fetchPriority="high"
           className="w-full h-full object-contain select-none drop-shadow-[0_25px_40px_rgba(180,90,40,0.25)]"
           draggable={false}
           animate={{

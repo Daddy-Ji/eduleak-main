@@ -8,9 +8,13 @@ import { PortalsSection } from "@/components/PortalsSection";
 import { InstitutesMarquee } from "@/components/InstitutesMarquee";
 import { WhyChooseUs, AudienceSection, ReadyToStart } from "@/components/WhyChooseUs";
 import { ArrowRight, Sparkles, BookOpen, Users, Award } from "lucide-react";
+import heroChar from "@/assets/hero-character.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
+    links: [
+      { rel: "preload", as: "image", href: heroChar },
+    ],
     meta: [
       { title: "EduLeak — Free Courses for JEE, NEET, UPSC & more" },
       { name: "description", content: "Discover free, curated courses from India's top coachings. Calm UI, zero distractions." },
