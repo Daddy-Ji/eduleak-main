@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroChar from "@/assets/hero-character.png";
+import heroChar from "@/assets/hero-character.webp";
 
 // Staged-entry hero illustration with continuous micro-gestures:
 //  - Gentle float on Y
