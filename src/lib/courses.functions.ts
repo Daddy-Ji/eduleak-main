@@ -10,7 +10,7 @@ async function admin() {
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
   const sb = await admin();
-  const [settings, coachings, exams, latest, portals, institutes, why, audience] = await Promise.all([
+  const [settings, coachings, exams, latest, portals, institutes, why, audience, testSeriesCount] = await Promise.all([
     sb.from("site_settings").select("*").eq("id", "singleton").maybeSingle(),
     sb.from("coachings").select("*").order("display_order"),
     sb.from("exams").select("*").order("display_order"),
@@ -23,6 +23,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     sb.from("featured_institutes").select("*").order("display_order"),
     sb.from("why_us").select("*").order("display_order"),
     sb.from("audience").select("*").order("display_order"),
+    sb.from("test_series").select("id", { count: "exact", head: true }).eq("is_active", true),
   ]);
   return {
     settings: settings.data,
@@ -33,7 +34,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     institutes: institutes.data ?? [],
     why: why.data ?? [],
     audience: audience.data ?? [],
+    testSeriesCount: testSeriesCount.count ?? 0,
   };
+});
+
+export const getTestSeries = createServerFn({ method: "GET" }).handler(async () => {
+  const sb = await admin();
+  const { data } = await sb.from("test_series").select("*").eq("is_active", true)
+    .order("display_order").order("created_at", { ascending: false });
+  return data ?? [];
 });
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
