@@ -12,6 +12,9 @@ import heroChar from "@/assets/hero-character.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
+    links: [
+      { rel: "preload", as: "image", href: heroChar },
+    ],
     meta: [
       { title: "EduLeak — Free Courses for JEE, NEET, UPSC & more" },
       { name: "description", content: "Discover free, curated courses from India's top coachings. Calm UI, zero distractions." },
