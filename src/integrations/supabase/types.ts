@@ -482,57 +482,6 @@ export type Database = {
         }
         Relationships: []
       }
-      test_series: {
-        Row: {
-          category: string | null
-          created_at: string
-          description: string | null
-          display_order: number
-          embed_in_app: boolean
-          emoji: string | null
-          id: string
-          is_active: boolean
-          link_url: string | null
-          logo_url: string | null
-          subtitle: string | null
-          title: string
-          updated_at: string
-          whatsapp_url: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          embed_in_app?: boolean
-          emoji?: string | null
-          id?: string
-          is_active?: boolean
-          link_url?: string | null
-          logo_url?: string | null
-          subtitle?: string | null
-          title: string
-          updated_at?: string
-          whatsapp_url?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          embed_in_app?: boolean
-          emoji?: string | null
-          id?: string
-          is_active?: boolean
-          link_url?: string | null
-          logo_url?: string | null
-          subtitle?: string | null
-          title?: string
-          updated_at?: string
-          whatsapp_url?: string | null
-        }
-        Relationships: []
-      }
       user_roles: {
         Row: {
           created_at: string

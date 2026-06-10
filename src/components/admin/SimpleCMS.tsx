@@ -138,9 +138,8 @@ export function PortalsAdmin() {
   return <SimpleCMS table="portals" title="portal" defaultRow={portalDefault} fields={portalFields} />;
 }
 
-export function TestSeriesAdmin() {
-  return <SimpleCMS table="test_series" title="test series" defaultRow={{ ...portalDefault, emoji: "📝" }} fields={portalFields} />;
-}
+
+
 
 
 export function InstitutesAdmin() {

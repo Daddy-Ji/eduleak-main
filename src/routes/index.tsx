@@ -79,28 +79,8 @@ function HomePage() {
 
       <PortalsSection portals={portals as any} title={settings?.portals_title ?? "Explore our Portals"} subtitle={settings?.portals_subtitle ?? "Everything you need — categorised"} />
 
-      <section className="py-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-primary/10 via-card to-primary/5 p-8 sm:p-10"
-          >
-            <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/15 blur-2xl" />
-            <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
-              <div>
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-3">
-                  📝 Test Series
-                </div>
-                <h2 className="font-display text-2xl sm:text-3xl font-semibold">All test series in one place</h2>
-                <p className="text-muted-foreground mt-1.5 max-w-xl">Mock tests, full-length papers & topic-wise series — free, curated, and just a tap away.</p>
-              </div>
-              <Link to="/test-series" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition whitespace-nowrap">
-                Explore all Test Series <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+
+
 
       <InstitutesMarquee institutes={institutes as any} title={settings?.institutes_title ?? "Featured Institutions"} subtitle={settings?.institutes_subtitle ?? "India's top coaching platforms — all in one place"} />
 

@@ -8,7 +8,7 @@ import { uploadFile } from "@/lib/storage";
 import { SignedImage } from "@/components/SignedImage";
 import { extractYouTubeId } from "@/lib/utils-youtube";
 import { Trash2, Plus, Save, LogOut, ShieldAlert, Upload, ImagePlus, Loader2, GraduationCap, BookOpen, Video, FileText, Layers, TrendingUp, ListVideo, FileJson, Wand2 } from "lucide-react";
-import { PortalsAdmin, TestSeriesAdmin, InstitutesAdmin, WhyAdmin, AudienceAdmin, NotificationsAdmin } from "@/components/admin/SimpleCMS";
+import { PortalsAdmin, InstitutesAdmin, WhyAdmin, AudienceAdmin, NotificationsAdmin } from "@/components/admin/SimpleCMS";
 
 // Styled logo upload button — drag/drop + click, with preview
 function LogoUploader({
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "stats" | "courses" | "coachings" | "exams" | "portals" | "test_series" | "institutes" | "why" | "audience" | "notifications" | "import" | "settings";
+type Tab = "stats" | "courses" | "coachings" | "exams" | "portals" | "institutes" | "why" | "audience" | "notifications" | "import" | "settings";
 
 function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -98,12 +98,12 @@ function AdminPage() {
         </Button>
       </div>
       <div className="flex gap-1 border-b mb-6 overflow-auto">
-        {(["stats", "courses", "coachings", "exams", "portals", "test_series", "institutes", "why", "audience", "notifications", "import", "settings"] as Tab[]).map((t) => (
+        {(["stats", "courses", "coachings", "exams", "portals", "institutes", "why", "audience", "notifications", "import", "settings"] as Tab[]).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 capitalize whitespace-nowrap transition ${
               tab === t ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
             }`}>
-            {t === "test_series" ? "Test Series" : t}
+            {t}
           </button>
         ))}
       </div>
@@ -112,7 +112,6 @@ function AdminPage() {
       {tab === "coachings" && <CoachingsAdmin />}
       {tab === "exams" && <ExamsAdmin />}
       {tab === "portals" && <PortalsAdmin />}
-      {tab === "test_series" && <TestSeriesAdmin />}
       {tab === "institutes" && <InstitutesAdmin />}
       {tab === "why" && <WhyAdmin />}
       {tab === "audience" && <AudienceAdmin />}

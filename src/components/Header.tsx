@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, Layers, Users, Award, Info, LogOut, LogIn, FileText } from "lucide-react";
+import { Menu, X, GraduationCap, Sun, Moon, ShieldCheck, Home, Layers, Users, Award, Info, LogOut, LogIn } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ type NavItem = { to: string; label: string; icon: any; hash?: boolean };
 const nav: NavItem[] = [
   { to: "/", label: "Home", icon: Home },
   { to: "/#portals", label: "Portals", icon: Layers, hash: true },
-  { to: "/test-series", label: "Test Series", icon: FileText },
   { to: "/coachings", label: "Coachings", icon: Users },
   { to: "/exams", label: "Exams", icon: Award },
   { to: "/about", label: "About", icon: Info },

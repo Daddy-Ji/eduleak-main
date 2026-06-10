@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestSeriesRouteImport } from './routes/test-series'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -22,11 +21,6 @@ import { Route as EmbedIdRouteImport } from './routes/embed.$id'
 import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
 import { Route as CoachingsSlugRouteImport } from './routes/coachings.$slug'
 
-const TestSeriesRoute = TestSeriesRouteImport.update({
-  id: '/test-series',
-  path: '/test-series',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CoursesRoute = CoursesRouteImport.update({
   id: '/courses',
   path: '/courses',
@@ -89,7 +83,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/courses': typeof CoursesRouteWithChildren
-  '/test-series': typeof TestSeriesRoute
   '/coachings/$slug': typeof CoachingsSlugRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/embed/$id': typeof EmbedIdRoute
@@ -103,7 +96,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/courses': typeof CoursesRouteWithChildren
-  '/test-series': typeof TestSeriesRoute
   '/coachings/$slug': typeof CoachingsSlugRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/embed/$id': typeof EmbedIdRoute
@@ -118,7 +110,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/courses': typeof CoursesRouteWithChildren
-  '/test-series': typeof TestSeriesRoute
   '/coachings/$slug': typeof CoachingsSlugRoute
   '/courses/$slug': typeof CoursesSlugRoute
   '/embed/$id': typeof EmbedIdRoute
@@ -134,7 +125,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/courses'
-    | '/test-series'
     | '/coachings/$slug'
     | '/courses/$slug'
     | '/embed/$id'
@@ -148,7 +138,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/courses'
-    | '/test-series'
     | '/coachings/$slug'
     | '/courses/$slug'
     | '/embed/$id'
@@ -162,7 +151,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/courses'
-    | '/test-series'
     | '/coachings/$slug'
     | '/courses/$slug'
     | '/embed/$id'
@@ -177,7 +165,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   CoursesRoute: typeof CoursesRouteWithChildren
-  TestSeriesRoute: typeof TestSeriesRoute
   CoachingsSlugRoute: typeof CoachingsSlugRoute
   EmbedIdRoute: typeof EmbedIdRoute
   ExamsSlugRoute: typeof ExamsSlugRoute
@@ -187,13 +174,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-series': {
-      id: '/test-series'
-      path: '/test-series'
-      fullPath: '/test-series'
-      preLoaderRoute: typeof TestSeriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/courses': {
       id: '/courses'
       path: '/courses'
@@ -291,7 +271,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   CoursesRoute: CoursesRouteWithChildren,
-  TestSeriesRoute: TestSeriesRoute,
   CoachingsSlugRoute: CoachingsSlugRoute,
   EmbedIdRoute: EmbedIdRoute,
   ExamsSlugRoute: ExamsSlugRoute,
