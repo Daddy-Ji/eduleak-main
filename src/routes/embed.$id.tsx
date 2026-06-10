@@ -17,9 +17,7 @@ function EmbedPage() {
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("portals").select("*").eq("id", id).maybeSingle();
-      if (data) { setPortal(data); return; }
-      const ts = await (supabase as any).from("test_series").select("*").eq("id", id).maybeSingle();
-      if (ts.data) setPortal(ts.data);
+      if (data) setPortal(data);
     })();
   }, [id]);
 
